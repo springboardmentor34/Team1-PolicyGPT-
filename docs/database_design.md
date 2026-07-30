@@ -1,7 +1,7 @@
 # Database Design Documentation - PolicyGPT (Milestone 1)
 
 ## Executive Summary
-This document details the relational database architecture for **PolicyGPT: Government Policy & Public Scheme Intelligence Platform**. The database is designed strictly in **Third Normal Form (3NF)** using PostgreSQL 14+, SQLAlchemy ORM 2.0+, and Alembic migration framework.
+This document details the relational database architecture for **PolicyGPT: Government Policy & Public Scheme Intelligence Platform**. The database is designed strictly in **Third Normal Form (3NF)** using PostgreSQL 16+, SQLAlchemy ORM 2.0+, and Alembic migration framework.
 
 ---
 
@@ -165,6 +165,13 @@ Stores historical query inputs and filters to power personal recommendations and
 | `created_at` | TIMESTAMPTZ | No | `CURRENT_TIMESTAMP` | None | Search timestamp |
 | `updated_at` | TIMESTAMPTZ | No | `CURRENT_TIMESTAMP` | None | Modification timestamp |
 
+### 2.10 `alembic_version`
+Internal Alembic schema migration tracker table automatically created and managed by Alembic.
+
+| Column | Data Type | Nullable | Default | Constraints | Description |
+|---|---|---|---|---|---|
+| `version_num` | VARCHAR(32) | No | None | PK | Active revision ID (`001_initial_schema`) |
+
 ---
 
 ## 3. Entity Relationships & Foreign Key Cascade Rules
@@ -181,10 +188,10 @@ Stores historical query inputs and filters to power personal recommendations and
 
 ---
 
-## 4. Indexing & Performance Strategy
+## 4. Verified Database Implementation State
 
-B-Tree indexes are explicitly created on columns frequently involved in `WHERE`, `JOIN`, `ORDER BY`, and `GROUP BY` operations:
-- **Foreign Key Columns**: `uploaded_by_id`, `policy_id`, `scheme_id`, `user_id` (accelerates join queries).
-- **Lookup Fields**: `email`, `code`, `title`, `sector`, `ministry_or_department`, `state_or_region` (accelerates search and filtering).
-- **Status & Boolean Flags**: `role`, `status`, `is_read` (accelerates list filtering by active states).
-- **JSONB Strategy**: `JSONB` columns (`rule_criteria_json`, `parameters_json`, `content_json`, `details_json`, `filters_applied`) enable fast dynamic rule evaluation without breaking 3NF schema structure. GIN indexes can be attached to JSONB columns for advanced payload filtering in future milestones.
+The PostgreSQL database `policygpt_db` owned by `policygpt_user` has been initialized, migrated, seeded, and verified:
+- **Total Tables**: 10 tables (`alembic_version`, `audit_logs`, `eligibility_rules`, `feedback`, `notifications`, `policies`, `reports`, `schemes`, `search_history`, `users`).
+- **Migration Command**: Executed `alembic upgrade head`.
+- **Seeding Command**: Executed `python3 scripts/seed_data.py`.
+- **Live Verification**: Verified via `psql -U policygpt_user -d policygpt_db` command `\dt`.

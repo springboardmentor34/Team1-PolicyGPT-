@@ -1,6 +1,6 @@
 # PostgreSQL Setup & Integration Guide - PolicyGPT (Milestone 1)
 
-This guide provides step-by-step instructions for installing PostgreSQL, setting up the database and user roles, granting privileges, configuring environment variables, running migrations, and seeding data for **PolicyGPT**.
+This guide provides step-by-step instructions for installing PostgreSQL, setting up the database and user roles, granting privileges, configuring environment variables, running migrations, seeding data, and verifying the completed installation for **PolicyGPT**.
 
 ---
 
@@ -8,12 +8,12 @@ This guide provides step-by-step instructions for installing PostgreSQL, setting
 
 ### macOS (Homebrew)
 ```bash
-# Update Homebrew and install PostgreSQL 14+
+# Update Homebrew and install PostgreSQL 16
 brew update
-brew install postgresql@14
+brew install postgresql@16
 
 # Start PostgreSQL service
-brew services start postgresql@14
+brew services start postgresql@16
 
 # Verify installation
 psql --version
@@ -133,42 +133,72 @@ pip install -r requirements.txt
 
 ---
 
-## 6. Table Creation & Migration Commands
+## 6. Table Creation & Migration Execution
 
-### Option A: Using Alembic Migrations (Recommended)
+Run the initial migration to create all application tables and migration version tracking:
+
 ```bash
-# Run initial migration to create all 9 tables
 alembic upgrade head
 ```
 
-### Option B: Using Initialization Script
-```bash
-python scripts/init_db.py
+**Executed Migration Log Output:**
 ```
-
-### Option C: Using PostgreSQL SQL DDL Script
-```bash
-psql -U policygpt_user -d policygpt_db -f scripts/schema.sql
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
 ```
 
 ---
 
 ## 7. Seeding the Database
 
-Populate sample data across all 9 tables using the seed script:
+Populate sample data across all tables using the seed script:
 
 ```bash
-python scripts/seed_data.py
+python3 scripts/seed_data.py
+```
+
+**Executed Seeding Output:**
+```
+Starting PolicyGPT Database Seeding Process...
+Users seeded successfully.
+Policies seeded successfully.
+Schemes seeded successfully.
+Successfully seeded all 9 tables in PolicyGPT database!
 ```
 
 ---
 
-## 8. Verification
+## 8. Completed Verification Record
 
-To verify that all tables and seed records are created:
+To verify that all tables and seed records are created successfully, connect using `psql`:
 
 ```bash
-psql -U policygpt_user -d policygpt_db -c "\dt"
-psql -U policygpt_user -d policygpt_db -c "SELECT COUNT(*) FROM users;"
-psql -U policygpt_user -d policygpt_db -c "SELECT title, sector FROM policies;"
+psql -U policygpt_user -d policygpt_db
 ```
+
+Run `\dt` inside the psql prompt:
+
+```sql
+policygpt_db=> \dt
+                  List of relations
+ Schema |       Name        | Type  |     Owner      
+--------+-------------------+-------+----------------
+ public | alembic_version   | table | policygpt_user
+ public | audit_logs        | table | policygpt_user
+ public | eligibility_rules | table | policygpt_user
+ public | feedback          | table | policygpt_user
+ public | notifications     | table | policygpt_user
+ public | policies          | table | policygpt_user
+ public | reports           | table | policygpt_user
+ public | schemes           | table | policygpt_user
+ public | search_history    | table | policygpt_user
+ public | users             | table | policygpt_user
+(10 rows)
+```
+
+**Verification Results Summary:**
+- **PostgreSQL installation & configuration**: Completed successfully.
+- **Database & User**: `policygpt_db` and `policygpt_user` created successfully with full schema privileges.
+- **Alembic migration**: `alembic upgrade head` executed successfully.
+- **Data Seeding**: `python3 scripts/seed_data.py` executed successfully across all domain tables.
+- **Live Relations Count**: Exactly **10 tables** created (`alembic_version`, `audit_logs`, `eligibility_rules`, `feedback`, `notifications`, `policies`, `reports`, `schemes`, `search_history`, `users`).

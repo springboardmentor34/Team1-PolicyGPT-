@@ -1,0 +1,147 @@
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #1a365d; // Deep professional navy blue background
+  padding: 20px;
+}
+
+.login-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  padding: 32px 28px;
+  box-sizing: border-box;
+
+  .header-section {
+    text-align: center;
+    margin-bottom: 24px;
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #e8f0fe;
+      color: #1a365d;
+      margin-bottom: 12px;
+
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+
+    .forgot-btn {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+
+      &:hover {
+        text-decoration: underline;
+        color: #1d4ed8;
+      }
+    }
+  }
+
+  .submit-btn {
+    height: 48px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: #1a365d !important;
+    color: #ffffff !important;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+
+    &::before, &::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    span {
+      padding: 0 10px;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+
+  .guest-btn {
+    height: 44px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    color: #475569;
+    border-color: #cbd5e1;
+
+    mat-icon {
+      margin-right: 6px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .footer-section {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: #475569;
+
+    p {
+      margin: 0;
+    }
+
+    .register-link {
+      color: #1a365d;
+      font-weight: 700;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

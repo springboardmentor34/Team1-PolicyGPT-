@@ -1,0 +1,83 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="logo-badge">
+        <mat-icon>account_balance</mat-icon>
+      </div>
+      <h1>PolicyGPT</h1>
+      <p class="subtitle">Government Policy & Public Scheme Intelligence Platform</p>
+    </div>
+
+    <!-- Login Form -->
+    <form (ngSubmit)="onSignIn()" #loginForm="ngForm">
+      
+      <!-- Select Role -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Select Role</mat-label>
+        <mat-select [(ngModel)]="selectedRole" name="role" required>
+          <mat-option value="citizen">Citizen</mat-option>
+          <mat-option value="officer">Government Officer</mat-option>
+          <mat-option value="admin">Administrator</mat-option>
+        </mat-select>
+        <mat-icon matSuffix>badge</mat-icon>
+      </mat-form-field>
+
+      <!-- Email Address -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <input matInput type="email" [(ngModel)]="email" name="email" placeholder="name@example.com" required />
+        <mat-icon matSuffix>email</mat-icon>
+      </mat-form-field>
+
+      <!-- Password Field with Toggle -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input 
+          matInput 
+          [type]="hidePassword ? 'password' : 'text'" 
+          [(ngModel)]="password" 
+          name="password" 
+          required 
+        />
+        <button 
+          mat-icon-button 
+          matSuffix 
+          type="button" 
+          (click)="togglePasswordVisibility($event)" 
+          [attr.aria-label]="'Toggle password visibility'">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Remember Me & Forgot Password -->
+      <div class="form-options">
+        <mat-checkbox [(ngModel)]="rememberMe" name="rememberMe" color="primary">
+          Remember me
+        </mat-checkbox>
+        <a href="#" class="forgot-btn" (click)="onForgotPassword($event)">Forgot Password?</a>
+      </div>
+
+      <!-- Main Sign In Button -->
+      <button mat-raised-button color="primary" type="submit" class="full-width submit-btn">
+        Sign In
+      </button>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Continue as Guest Option -->
+      <button mat-stroke-button type="button" class="full-width guest-btn" (click)="onGuestLogin($event)">
+        <mat-icon>person_outline</mat-icon> Continue as Guest User
+      </button>
+    </form>
+
+    <!-- Footer Registration Link -->
+    <div class="footer-section">
+      <p>Don't have an account? <a href="#" (click)="onRegister($event)" class="register-link">Register Here</a></p>
+    </div>
+
+  </div>
+</div>

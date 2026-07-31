@@ -1,0 +1,88 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    
+    <!-- Header Section -->
+    <h1 class="brand-title">PolicyGPT</h1>
+    <p class="brand-subtitle">Government Policy & Public Scheme Intelligence Platform</p>
+    
+    <div class="icon-container">
+      <div class="building-icon">🏛️</div>
+    </div>
+
+    <!-- Error Alert Banner -->
+    <div *ngIf="errorMessage" class="alert alert-danger" style="background-color: #ffebee; color: #c62828; padding: 10px 14px; border-radius: 6px; margin-bottom: 18px; font-size: 0.85rem; text-align: left; border-left: 4px solid #d32f2f;">
+      ⚠️ {{ errorMessage }}
+    </div>
+
+    <!-- Form Section -->
+    <form class="login-form" (ngSubmit)="onLogin()">
+      
+      <!-- Role Selection -->
+      <div class="form-group">
+        <label for="role">Select Role*</label>
+        <div class="select-wrapper">
+          <select id="role" name="role" [(ngModel)]="role">
+            <option value="Citizen">Citizen</option>
+            <option value="Officer">Government Officer</option>
+            <option value="Admin">Administrator</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group input-with-icon">
+        <label for="email">Email Address*</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          placeholder="Email Address*" 
+          [(ngModel)]="email" 
+          required />
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group input-with-icon">
+        <label for="password">Password*</label>
+        <input 
+          [type]="showPassword ? 'text' : 'password'" 
+          id="password" 
+          name="password" 
+          placeholder="Password*" 
+          [(ngModel)]="password" 
+          required />
+        
+        <span 
+          class="toggle-eye-btn" 
+          (click)="togglePasswordVisibility()">
+          {{ showPassword ? '🙈' : '👁️' }}
+        </span>
+      </div>
+
+      <!-- Remember Me & Forgot Password -->
+      <div class="form-options">
+        <label class="checkbox-container">
+          <input type="checkbox" />
+          <span>Remember me</span>
+        </label>
+        <a href="#" class="forgot-link">Forgot Password?</a>
+      </div>
+
+      <!-- Sign In Button -->
+      <button type="submit" class="submit-btn" [disabled]="isLoading" style="background-color: #1a237e; color: #ffffff;">
+        <span *ngIf="!isLoading">Sign In</span>
+        <span *ngIf="isLoading">Authenticating... ⏳</span>
+      </button>
+
+    </form>
+
+    <!-- Footer Links -->
+    <div class="card-footer">
+      <p class="register-text">
+        Don't have an account? <a routerLink="/register" class="register-link">Register Here</a>
+      </p>
+      <a routerLink="/login" class="guest-link">Continue as Guest User</a>
+    </div>
+
+  </div>
+</div>

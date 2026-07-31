@@ -1,0 +1,138 @@
+<div class="dashboard-wrapper">
+  <!-- Top Navigation Header -->
+  <header class="top-navbar">
+    <div class="nav-brand">
+      <span class="logo-icon">🏛️</span>
+      <span class="logo-text">PolicyGPT</span>
+      <span class="portal-badge">Intelligence Portal</span>
+    </div>
+
+    <div class="nav-search">
+      <input type="text" placeholder="Search policies, schemes, or directives..." [(ngModel)]="searchQuery" />
+      <button class="search-btn">🔍</button>
+    </div>
+
+    <div class="nav-user">
+      <div class="user-info">
+        <span class="user-name">Welcome, {{ currentUser?.full_name || 'User' }}</span>
+        <span class="role-badge" [ngClass]="currentUser?.role?.toLowerCase()">{{ userRoleDisplay }}</span>
+      </div>
+      <button class="logout-btn" (click)="onLogout()">
+        <span>Logout</span> 🚪
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="dashboard-container">
+    
+    <!-- Loading Banner -->
+    <div *ngIf="isLoadingData" style="background: #e0f2fe; color: #0369a1; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-weight: 500;">
+      🔄 Synchronizing dashboard with backend database...
+    </div>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+      <div class="hero-text">
+        <h1>Welcome to PolicyGPT Intelligence Platform</h1>
+        <p>Real-time analytics, scheme matching, and government policy intelligence.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-num">{{ schemes.length || 142 }}</span>
+          <span class="stat-label">Active Schemes</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">{{ policies.length || 38 }}</span>
+          <span class="stat-label">Government Directives</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">98.4%</span>
+          <span class="stat-label">Eligibility Match Rate</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Role-Specific Views -->
+
+    <!-- 1. CITIZEN DASHBOARD VIEW -->
+    <section *ngIf="currentUser?.role?.toLowerCase() === 'citizen'" class="role-view citizen-view">
+      <h2 class="section-title">✨ Recommended Schemes & Direct Benefits</h2>
+      <div class="cards-grid">
+        <div class="scheme-card" *ngFor="let item of schemes">
+          <div class="card-tag">{{ item.code || 'SCHEME' }}</div>
+          <h3>{{ item.title }}</h3>
+          <p class="benefit"><strong>Benefit:</strong> {{ item.benefits_summary || item.summary }}</p>
+          <div class="card-footer">
+            <span class="badge active">{{ item.status }}</span>
+            <button class="apply-btn">Check Eligibility</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. GOVERNMENT OFFICER DASHBOARD VIEW -->
+    <section *ngIf="currentUser?.role?.toLowerCase() === 'policy_officer' || currentUser?.role?.toLowerCase() === 'officer'" class="role-view officer-view">
+      <div class="section-header">
+        <h2 class="section-title">📋 Officer Policy Management Workspace</h2>
+        <button class="action-btn">+ Upload New Policy</button>
+      </div>
+      
+      <div class="table-card">
+        <h3>Policy Directives Overview</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Policy Title</th>
+              <th>Ministry / Department</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pol of policies">
+              <td class="font-medium">{{ pol.title }}</td>
+              <td>{{ pol.ministry_or_department || 'Government Department' }}</td>
+              <td><span class="badge" [ngClass]="(pol.status || 'active').toLowerCase().replace(' ', '-')">{{ pol.status }}</span></td>
+              <td><button class="btn-sm">Edit</button> <button class="btn-sm outline">Review</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. ADMINISTRATOR DASHBOARD VIEW -->
+    <section *ngIf="currentUser?.role?.toLowerCase() === 'admin'" class="role-view admin-view">
+      <div class="section-header">
+        <h2 class="section-title">🛡️ System Administration & Governance</h2>
+        <button class="action-btn">System Audit Logs</button>
+      </div>
+
+      <div class="admin-grid">
+        <div class="table-card">
+          <h3>Platform Audit Logs</h3>
+          <ul class="audit-list">
+            <li *ngFor="let log of auditLogs" class="audit-item">
+              <div class="audit-header">
+                <span class="audit-action">{{ log.action }}</span>
+                <span class="audit-time">{{ log.timestamp }}</span>
+              </div>
+              <p class="audit-details">User: <strong>{{ log.user }}</strong> - {{ log.details }}</p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="table-card">
+          <h3>Quick Administration Controls</h3>
+          <div class="admin-actions">
+            <button class="control-btn">👤 User Management</button>
+            <button class="control-btn">🔒 Role Permissions</button>
+            <button class="control-btn">⚡ Clear API Cache</button>
+            <button class="control-btn">📊 Export Compliance Reports</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>

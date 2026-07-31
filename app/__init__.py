@@ -1,3 +1,0 @@
-"""
-PolicyGPT Application Package Initialization
-"""

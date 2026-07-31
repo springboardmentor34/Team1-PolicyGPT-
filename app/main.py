@@ -5,12 +5,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 import app.models
 
+# Import routers
+from app.routers import auth
+
 
 app = FastAPI(
     title="PolicyGPT API",
     description="Government Policy & Public Scheme Intelligence Platform",
     version="1.0.0"
 )
+
+
+# Include API routers
+app.include_router(auth.router)
 
 
 # CORS configuration for Angular frontend

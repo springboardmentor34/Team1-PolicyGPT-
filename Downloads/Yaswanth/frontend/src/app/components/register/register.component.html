@@ -1,0 +1,89 @@
+<div class="register-wrapper">
+  <div class="register-card">
+    
+    <!-- Header -->
+    <div class="card-header">
+      <h2>Register</h2>
+    </div>
+
+    <!-- Registration Form -->
+    <form class="register-form">
+      
+      <!-- User Name -->
+      <div class="form-group">
+        <label for="username">User Name</label>
+        <div class="input-container">
+          <span class="input-icon">👤</span>
+          <input type="text" id="username" placeholder="User Name" required />
+        </div>
+      </div>
+
+      <!-- Phone Number -->
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <div class="input-container">
+          <span class="input-icon">📞</span>
+          <input type="tel" id="phone" placeholder="Phone Number" required />
+        </div>
+      </div>
+
+      <!-- Email Address -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-container">
+          <span class="input-icon">✉</span>
+          <input type="email" id="email" placeholder="Email Address" required />
+        </div>
+      </div>
+
+      <!-- Password -->
+ <!-- Password Field -->
+<div class="form-group">
+  <label for="password">Password</label>
+  <div class="input-container">
+    <span class="input-icon">🔒</span>
+    <input 
+      [type]="showPassword ? 'text' : 'password'" 
+      id="password" 
+      placeholder="Password" 
+      required />
+    <span 
+      class="toggle-eye-btn" 
+      (click)="togglePasswordVisibility()">
+      {{ showPassword ? '🙈' : '👁️' }}
+    </span>
+  </div>
+</div>
+
+<!-- Confirm Password Field -->
+<div class="form-group">
+  <label for="confirmPassword">Confirm Password</label>
+  <div class="input-container">
+    <span class="input-icon">🔒</span>
+    <input 
+      [type]="showConfirmPassword ? 'text' : 'password'" 
+      id="confirmPassword" 
+      placeholder="Confirm Password" 
+      required />
+    <span 
+      class="toggle-eye-btn" 
+      (click)="toggleConfirmPasswordVisibility()">
+      {{ showConfirmPassword ? '🙈' : '👁️' }}
+    </span>
+  </div>
+</div>
+      <!-- Action Buttons -->
+      <div class="button-group">
+        <button type="submit" class="submit-btn">Create Account</button>
+        <button type="button" routerLink="/login" class="cancel-btn">Cancel</button>
+      </div>
+
+    </form>
+
+    <!-- Back to Login Link -->
+    <div class="card-footer">
+      <p>Already have an account? <a routerLink="/login">Sign In Here</a></p>
+    </div>
+
+  </div>
+</div>

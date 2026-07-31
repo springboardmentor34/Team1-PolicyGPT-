@@ -1,0 +1,163 @@
+/* Wrapper with Deep Blue Background matching Login page */
+.register-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1e428a; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+}
+
+/* Central Registration Card */
+.register-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Banner */
+.card-header {
+  background-color: #15438c;
+  color: #ffffff;
+  padding: 18px 20px;
+  text-align: center;
+
+  h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+}
+
+/* Form Layout */
+.register-form {
+  padding: 25px 25px 15px 25px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: #4a5568;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+}
+
+/* Input Fields & Container */
+.input-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #15438c;
+  border-radius: 8px;
+  padding: 0 12px;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    border-color: #0d2c5e;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(21, 67, 140, 0.15);
+  }
+
+  .input-icon {
+    font-size: 1rem;
+    color: #15438c;
+    margin-right: 10px;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: #1e293b;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+
+  /* Password Toggle Button Styling */
+  .toggle-eye-btn {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    user-select: none;
+    z-index: 10;
+    font-size: 1.1rem;
+    padding-left: 8px;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+/* Action Buttons */
+.button-group {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #f58220; /* Orange highlight button matching reference */
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #e07213;
+  }
+}
+
+.cancel-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #15438c;
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #0d2c5e;
+  }
+}
+
+/* Footer Navigation Link */
+.card-footer {
+  text-align: center;
+  padding-bottom: 20px;
+  font-size: 0.85rem;
+  color: #64748b;
+
+  a {
+    color: #15438c;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

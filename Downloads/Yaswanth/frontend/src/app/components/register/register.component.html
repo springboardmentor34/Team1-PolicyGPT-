@@ -6,15 +6,33 @@
       <h2>Register</h2>
     </div>
 
+    <!-- Error Alert Banner -->
+    <div *ngIf="errorMessage" class="alert alert-danger" style="background-color: #ffebee; color: #c62828; padding: 10px 14px; margin: 15px 25px 0 25px; border-radius: 6px; font-size: 0.85rem; text-align: left; border-left: 4px solid #d32f2f;">
+      ⚠️ {{ errorMessage }}
+    </div>
+
     <!-- Registration Form -->
-    <form class="register-form">
+    <form class="register-form" (ngSubmit)="onRegister()">
       
+      <!-- Role Selection -->
+      <div class="form-group">
+        <label for="role">Register As</label>
+        <div class="input-container">
+          <span class="input-icon">🔰</span>
+          <select id="role" name="role" [(ngModel)]="role" style="width: 100%; border: none; background: transparent; outline: none; padding: 10px 0; font-size: 0.95rem;">
+            <option value="Citizen">Citizen</option>
+            <option value="Officer">Government Officer</option>
+            <option value="Admin">Administrator</option>
+          </select>
+        </div>
+      </div>
+
       <!-- User Name -->
       <div class="form-group">
-        <label for="username">User Name</label>
+        <label for="username">User Name*</label>
         <div class="input-container">
           <span class="input-icon">👤</span>
-          <input type="text" id="username" placeholder="User Name" required />
+          <input type="text" id="username" name="username" placeholder="User Name" [(ngModel)]="username" required />
         </div>
       </div>
 
@@ -23,58 +41,65 @@
         <label for="phone">Phone Number</label>
         <div class="input-container">
           <span class="input-icon">📞</span>
-          <input type="tel" id="phone" placeholder="Phone Number" required />
+          <input type="tel" id="phone" name="phone" placeholder="Phone Number" [(ngModel)]="phone" />
         </div>
       </div>
 
       <!-- Email Address -->
       <div class="form-group">
-        <label for="email">Email Address</label>
+        <label for="email">Email Address*</label>
         <div class="input-container">
           <span class="input-icon">✉</span>
-          <input type="email" id="email" placeholder="Email Address" required />
+          <input type="email" id="email" name="email" placeholder="Email Address" [(ngModel)]="email" required />
         </div>
       </div>
 
-      <!-- Password -->
- <!-- Password Field -->
-<div class="form-group">
-  <label for="password">Password</label>
-  <div class="input-container">
-    <span class="input-icon">🔒</span>
-    <input 
-      [type]="showPassword ? 'text' : 'password'" 
-      id="password" 
-      placeholder="Password" 
-      required />
-    <span 
-      class="toggle-eye-btn" 
-      (click)="togglePasswordVisibility()">
-      {{ showPassword ? '🙈' : '👁️' }}
-    </span>
-  </div>
-</div>
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password*</label>
+        <div class="input-container">
+          <span class="input-icon">🔒</span>
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            id="password" 
+            name="password" 
+            placeholder="Password" 
+            [(ngModel)]="password" 
+            required />
+          <span 
+            class="toggle-eye-btn" 
+            (click)="togglePasswordVisibility()">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </span>
+        </div>
+      </div>
 
-<!-- Confirm Password Field -->
-<div class="form-group">
-  <label for="confirmPassword">Confirm Password</label>
-  <div class="input-container">
-    <span class="input-icon">🔒</span>
-    <input 
-      [type]="showConfirmPassword ? 'text' : 'password'" 
-      id="confirmPassword" 
-      placeholder="Confirm Password" 
-      required />
-    <span 
-      class="toggle-eye-btn" 
-      (click)="toggleConfirmPasswordVisibility()">
-      {{ showConfirmPassword ? '🙈' : '👁️' }}
-    </span>
-  </div>
-</div>
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password*</label>
+        <div class="input-container">
+          <span class="input-icon">🔒</span>
+          <input 
+            [type]="showConfirmPassword ? 'text' : 'password'" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            placeholder="Confirm Password" 
+            [(ngModel)]="confirmPassword" 
+            required />
+          <span 
+            class="toggle-eye-btn" 
+            (click)="toggleConfirmPasswordVisibility()">
+            {{ showConfirmPassword ? '🙈' : '👁️' }}
+          </span>
+        </div>
+      </div>
+
       <!-- Action Buttons -->
       <div class="button-group">
-        <button type="submit" class="submit-btn">Create Account</button>
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Create Account</span>
+          <span *ngIf="isLoading">Creating Account... ⏳</span>
+        </button>
         <button type="button" routerLink="/login" class="cancel-btn">Cancel</button>
       </div>
 

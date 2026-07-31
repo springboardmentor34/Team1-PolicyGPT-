@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 # Import database and models
 from app.database import engine, Base
@@ -45,3 +46,19 @@ def health_check():
         "status": "healthy",
         "database": "connected"
     }
+
+
+@app.get("/db-test")
+def db_test():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+
+        return {
+            "database": "connected"
+        }
+
+    except Exception as e:
+        return {
+            "error": str(e)
+        }

@@ -7,6 +7,10 @@ from app.api.auth import router as auth_router
 from app.api.users import router as users_router
 from app.api.policies import router as policies_router
 from app.api.schemes import router as schemes_router
+from app.api.search import router as search_router
+from app.api.eligibility import router as eligibility_router
+from app.api.comparison import router as comparison_router
+from app.api.approval import router as approval_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -36,6 +40,10 @@ app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(policies_router)
 app.include_router(schemes_router)
+app.include_router(search_router)
+app.include_router(eligibility_router)
+app.include_router(comparison_router)
+app.include_router(approval_router)
 
 
 @app.get("/", tags=["Health Check"])

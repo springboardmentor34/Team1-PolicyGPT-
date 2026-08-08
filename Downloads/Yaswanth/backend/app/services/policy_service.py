@@ -41,3 +41,15 @@ def update_policy(db: Session, policy_id: UUID, policy_in: PolicyUpdate) -> Poli
     db.commit()
     db.refresh(policy)
     return policy
+
+def delete_policy(db: Session, policy_id: UUID) -> None:
+    policy = get_policy_by_id(db, policy_id)
+
+    if not policy:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Policy not found"
+        )
+
+    db.delete(policy)
+    db.commit()

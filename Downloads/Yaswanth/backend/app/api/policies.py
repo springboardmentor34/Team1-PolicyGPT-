@@ -5,7 +5,13 @@ from sqlalchemy.orm import Session
 from app.database import get_db, User
 from app.schemas.policy import PolicyResponse, PolicyCreate, PolicyUpdate
 from app.dependencies import get_current_user, require_roles
-from app.services.policy_service import create_policy, get_policy_by_id, get_all_policies, update_policy
+from app.services.policy_service import (
+    create_policy,
+    get_policy_by_id,
+    get_all_policies,
+    update_policy,
+    delete_policy
+)
 
 router = APIRouter(prefix="/policies", tags=["Policies"])
 
@@ -45,4 +51,31 @@ def get_policy(policy_id: UUID, db: Session = Depends(get_db)):
     policy = get_policy_by_id(db, policy_id)
     if not policy:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Policy not found")
-    return policy
+    return policy 
+
+@router.put(
+    "/{policy_id}",
+    response_model=PolicyResponse,
+    summary="Update policy",
+    description="Updates an existing policy (Requires policy_officer or admin role)."
+)
+def edit_policy(
+    policy_id: UUID,
+    policy_in: PolicyUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["policy_officer", "admin"]))
+):
+    return update_policy(db, policy_id, policy_in)
+
+@router.delete(
+    "/{policy_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete policy",
+    description="Deletes a policy (Requires policy_officer or admin role)."
+)
+def remove_policy(
+    policy_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["policy_officer", "admin"]))
+):
+    delete_policy(db, policy_id)

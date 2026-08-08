@@ -5,7 +5,13 @@ from sqlalchemy.orm import Session
 from app.database import get_db, User
 from app.schemas.scheme import SchemeResponse, SchemeCreate, SchemeUpdate
 from app.dependencies import require_roles
-from app.services.scheme_service import create_scheme, get_scheme_by_id, get_all_schemes, update_scheme
+from app.services.scheme_service import (
+    create_scheme,
+    get_scheme_by_id,
+    get_all_schemes,
+    update_scheme,
+    delete_scheme
+)
 
 router = APIRouter(prefix="/schemes", tags=["Public Schemes"])
 
@@ -46,3 +52,31 @@ def get_scheme(scheme_id: UUID, db: Session = Depends(get_db)):
     if not scheme:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Scheme not found")
     return scheme
+
+@router.put(
+    "/{scheme_id}",
+    response_model=SchemeResponse,
+    summary="Update public scheme",
+    description="Updates an existing public scheme (Requires policy_officer or admin role)."
+)
+def edit_scheme(
+    scheme_id: UUID,
+    scheme_in: SchemeUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["policy_officer", "admin"]))
+):
+    return update_scheme(db, scheme_id, scheme_in)
+
+
+@router.delete(
+    "/{scheme_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete public scheme",
+    description="Deletes a public scheme (Requires policy_officer or admin role)."
+)
+def remove_scheme(
+    scheme_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["policy_officer", "admin"]))
+):
+    delete_scheme(db, scheme_id)

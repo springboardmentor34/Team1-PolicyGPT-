@@ -50,3 +50,16 @@ def update_scheme(db: Session, scheme_id: UUID, scheme_in: SchemeUpdate) -> Sche
     db.commit()
     db.refresh(scheme)
     return scheme
+
+
+def delete_scheme(db: Session, scheme_id: UUID) -> None:
+    scheme = get_scheme_by_id(db, scheme_id)
+
+    if not scheme:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Scheme not found"
+        )
+
+    db.delete(scheme)
+    db.commit()

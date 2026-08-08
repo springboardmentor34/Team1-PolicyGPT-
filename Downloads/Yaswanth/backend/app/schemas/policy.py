@@ -3,7 +3,6 @@ from datetime import date, datetime
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
-
 class PolicyBase(BaseModel):
     title: str
     description: str

@@ -1,0 +1,30 @@
+# Environment files (EXPLICITLY EXCLUDED per request)
+.env
+.env.*
+*.env
+*.env.*
+.env.example
+*.env.example
+**/.env
+**/.env.*
+**/.env.example
+
+# Node dependencies & build
+node_modules/
+dist/
+tmp/
+.angular/
+
+# Python virtual environment & cache
+venv/
+.venv/
+env/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# IDEs & OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

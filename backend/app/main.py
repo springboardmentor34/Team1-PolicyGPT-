@@ -19,7 +19,7 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url="/openapi.json",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url=None,         # We serve a custom /redoc with pinned CDN
 )
 
 # CORS Configuration for Angular Frontend
@@ -227,6 +227,29 @@ def root():
         "database_status": "Connected Successfully",
         "api_docs": "/docs"
     }
+
+
+@app.get("/redoc", include_in_schema=False)
+def custom_redoc():
+    """Custom ReDoc page using a pinned stable CDN bundle."""
+    from fastapi.responses import HTMLResponse
+    html = """
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PolicyGPT API - ReDoc</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+  <style>body { margin: 0; padding: 0; }</style>
+</head>
+<body>
+  <noscript>ReDoc requires JavaScript enabled.</noscript>
+  <redoc spec-url="/openapi.json"></redoc>
+  <script src="https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.js"></script>
+</body>
+</html>"""
+    return HTMLResponse(content=html)
 
 @app.get("/health")
 def health_check():

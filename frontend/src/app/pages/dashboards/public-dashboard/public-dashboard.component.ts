@@ -308,16 +308,14 @@ import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.di
   `
 })
 export class PublicDashboardComponent implements OnInit {
-  public schemes: Scheme[] = [];
-  public policies: Policy[] = [];
   public allSchemes: Scheme[] = [
     {
       id: 1,
       name: 'PM-KISAN Samman Nidhi Scheme',
       code: 'SCH-AGRI-001',
       category: 'Farmer Welfare',
-      description: 'Direct income support scheme providing ₹6,000 per year to landholding farmer families across India.',
-      benefits: '₹6,000 direct benefit transfer (DBT) annually into bank accounts',
+      description: 'Direct income support scheme providing ₹6,000 per year to landholding farmer families across India in three equal quadruply installments.',
+      benefits: '₹6,000 direct benefit transfer (DBT) annually into bank accounts, free soil testing cards, and 50% seed subsidy.',
       target_group: 'Small and marginal landholding farmers',
       application_process: 'Apply online at PM-KISAN portal with Aadhaar card and land records.',
       application_link: 'https://pmkisan.gov.in',
@@ -329,9 +327,9 @@ export class PublicDashboardComponent implements OnInit {
       name: 'Ayushman Bharat PM-JAY',
       code: 'SCH-HLTH-002',
       category: 'Healthcare',
-      description: 'Health insurance scheme providing health cover of ₹5 Lakhs per family per year.',
-      benefits: 'Cashless secondary and tertiary healthcare hospitalization',
-      target_group: 'Low-income households',
+      description: 'World\'s largest health insurance scheme providing health cover of ₹5 Lakhs per family per year for secondary and tertiary care.',
+      benefits: 'Cashless and paperless access to healthcare services at empaneled public and private hospitals nationwide.',
+      target_group: 'Low-income households identified via SECC database',
       application_process: 'Check eligibility online or visit nearest Ayushman Mitra center.',
       application_link: 'https://pmjay.gov.in',
       status: 'Active',
@@ -342,8 +340,8 @@ export class PublicDashboardComponent implements OnInit {
       name: 'Post-Matric Scholarship for Higher Education',
       code: 'SCH-EDU-003',
       category: 'Scholarships',
-      description: 'Financial scholarship assistance to students pursuing post-secondary studies.',
-      benefits: 'Full tuition reimbursement + monthly maintenance allowance',
+      description: 'Financial scholarship assistance to students belonging to SC/ST/OBC and economically weaker sections pursuing post-secondary studies.',
+      benefits: '100% tuition fee reimbursement + monthly maintenance allowance up to ₹1,200/month.',
       target_group: 'Students pursuing Diploma, UG, or PG degrees',
       application_process: 'Submit application through National Scholarship Portal (NSP).',
       application_link: 'https://scholarships.gov.in',
@@ -351,6 +349,60 @@ export class PublicDashboardComponent implements OnInit {
       created_at: new Date().toISOString()
     }
   ];
+
+  public schemes: Scheme[] = [...this.allSchemes];
+
+  public policies: Policy[] = [
+    {
+      id: 1,
+      title: 'National Agricultural & Farmer Support Policy 2024',
+      code: 'POL-AGRI-2024-01',
+      description: 'Comprehensive national policy framework aimed at doubling farmer income, modernizing irrigation, and expanding crop insurance.',
+      summary: 'Framework for financial support, soil health testing, and market linkage for small and marginal farmers.',
+      category: 'Agriculture',
+      ministry: 'Ministry of Agriculture & Farmers Welfare',
+      department: 'Department of Agriculture and Farmers Welfare',
+      state: 'All India',
+      sector: 'Agriculture & Rural Development',
+      status: 'PUBLISHED',
+      created_by_id: 2,
+      view_count: 1420,
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 2,
+      title: 'Ayushman Digital Health & Wellness Guarantee Policy',
+      code: 'POL-HLTH-2024-02',
+      description: 'National policy mandating free secondary and tertiary healthcare coverage and digital health ID cards for all vulnerable citizens.',
+      summary: 'Universal health insurance coverage up to ₹5 Lakhs per family per annum for vulnerable households.',
+      category: 'Healthcare',
+      ministry: 'Ministry of Health and Family Welfare',
+      department: 'National Health Authority',
+      state: 'All India',
+      sector: 'Public Health & Medicine',
+      status: 'PUBLISHED',
+      created_by_id: 2,
+      view_count: 2890,
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 3,
+      title: 'National Education Empowerment & Digital Literacy Policy',
+      code: 'POL-EDU-2024-03',
+      description: 'Policy framework promoting universal access to higher education, digital infrastructure in rural schools, and post-matric scholarship allocation.',
+      summary: 'Promotes post-matric scholarships, free laptop distribution to meritorious students, and skill centers.',
+      category: 'Education',
+      ministry: 'Ministry of Education',
+      department: 'Department of Higher Education',
+      state: 'All India',
+      sector: 'Education & Skill Development',
+      status: 'PUBLISHED',
+      created_by_id: 2,
+      view_count: 3150,
+      created_at: new Date().toISOString()
+    }
+  ];
+
   public selectedScheme: Scheme | null = null;
   
   private apiService = inject(ApiService);
@@ -366,7 +418,6 @@ export class PublicDashboardComponent implements OnInit {
         }
       },
       error: () => {
-        // Keep initial fallback schemes
         this.schemes = this.allSchemes.slice(0, 3);
       }
     });

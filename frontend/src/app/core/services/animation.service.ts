@@ -18,16 +18,15 @@ export class AnimationService {
       this.observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting) {
+            if (entry.isIntersecting || entry.intersectionRatio > 0) {
               entry.target.classList.add('is-visible');
-              // Unobserve after revealing to save memory — animate once
               this.observer?.unobserve(entry.target);
             }
           });
         },
         {
-          threshold: 0.12,
-          rootMargin: '0px 0px -36px 0px',
+          threshold: 0.01,
+          rootMargin: '0px 0px 100px 0px',
         }
       );
     }
@@ -35,7 +34,21 @@ export class AnimationService {
 
   /** Register an element to be watched for scroll-reveal. */
   observe(el: HTMLElement): void {
-    this.observer?.observe(el);
+    if (!this.observer) {
+      el.classList.add('is-visible');
+      return;
+    }
+    this.observer.observe(el);
+
+    // Instant viewport check to ensure elements visible on screen get revealed immediately
+    if (typeof window !== 'undefined') {
+      requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 100 && rect.bottom > -50) {
+          el.classList.add('is-visible');
+        }
+      });
+    }
   }
 
   /** Remove an element from the observer (call on destroy). */

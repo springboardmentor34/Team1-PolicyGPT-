@@ -22,8 +22,17 @@ import { ApiService } from '../../../core/services/api.service';
               <p class="text-muted small">Enter your registered email address to receive password reset instructions via email.</p>
             </div>
 
-            <div *ngIf="successMessage" class="alert alert-success small py-2 mb-3" role="alert">
-              <i class="fa-solid fa-circle-check me-1"></i> {{ successMessage }}
+            <div *ngIf="successMessage" class="alert alert-success small py-3 mb-3" role="alert">
+              <div class="d-flex align-items-start">
+                <i class="fa-solid fa-circle-check fs-5 me-2 mt-0.5"></i>
+                <div>
+                  <strong>Email Sent Successfully!</strong>
+                  <div class="mt-1">{{ successMessage }}</div>
+                </div>
+              </div>
+              <a routerLink="/reset-password" class="btn btn-gov-saffron btn-sm w-100 mt-3 text-white fw-bold">
+                <i class="fa-solid fa-lock me-1"></i> Go to Update Password Page <i class="fa-solid fa-arrow-right ms-1"></i>
+              </a>
             </div>
 
             <div *ngIf="errorMessage" class="alert alert-danger small py-2 mb-3" role="alert">
@@ -82,7 +91,7 @@ export class ForgotPasswordComponent {
       )
       .subscribe({
         next: (res: any) => {
-          this.successMessage = res.message || 'Password reset instructions have been sent to your email.';
+          this.successMessage = res.message || 'Password reset instructions have been sent to your email address.';
         },
         error: (err) => {
           this.errorMessage = err?.error?.detail || 'Request failed. Please check network connection and try again.';

@@ -1,7 +1,7 @@
 import secrets
 import hashlib
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import verify_password, get_password_hash, create_access_token
@@ -128,7 +128,11 @@ def logout(current_user: User = Depends(require_authenticated_user), db: Session
 GENERIC_FORGOT_SUCCESS_MSG = "If an account with that email address exists, password reset instructions have been sent to your email inbox."
 
 @router.post("/forgot-password")
-def forgot_password(input_data: ForgotPasswordInput, db: Session = Depends(get_db)):
+def forgot_password(
+    input_data: ForgotPasswordInput,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
     email_clean = input_data.email.strip().lower()
     user = db.query(User).filter(User.email.ilike(email_clean)).first()
 
@@ -149,10 +153,11 @@ def forgot_password(input_data: ForgotPasswordInput, db: Session = Depends(get_d
         db.add(audit)
         db.commit()
 
-        # Send reset link email asynchronously / via Resend API
-        send_password_reset_email(to_email=user.email, raw_reset_token=raw_token)
+        # Send reset link email in background task so HTTP response returns immediately
+        background_tasks.add_task(send_password_reset_email, user.email, raw_token)
 
     return {"message": GENERIC_FORGOT_SUCCESS_MSG}
+
 
 @router.post("/reset-password")
 def reset_password(input_data: ResetPasswordInput, db: Session = Depends(get_db)):

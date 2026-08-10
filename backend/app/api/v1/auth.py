@@ -1,4 +1,5 @@
 import secrets
+import hashlib
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -7,8 +8,12 @@ from app.core.security import verify_password, get_password_hash, create_access_
 from app.models.models import User, AuditLog
 from app.schemas.schemas import UserCreate, UserLogin, Token, UserOut, ForgotPasswordInput, ResetPasswordInput
 from app.api.deps import require_authenticated_user
+from app.services.notification_service import create_notification, notify_users_by_role
+from app.services.email_service import send_password_reset_email
+
 
 router = APIRouter(prefix="/auth", tags=["Authentication & Role Management"])
+
 
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
@@ -53,9 +58,27 @@ def register_user(user_in: UserCreate, db: Session = Depends(get_db)):
         details=f"Public Citizen account registered for {db_user.email}"
     )
     db.add(audit)
+
+    # Event Notifications
+    create_notification(
+        db, db_user.id,
+        "Welcome to PolicyGPT Portal",
+        f"Welcome {db_user.full_name}! Your Citizen account has been registered successfully. Explore welfare schemes and verify eligibility.",
+        "System Alert"
+    )
+
+
+    notify_users_by_role(
+        db, "Administrator",
+        "New Citizen Self-Registration",
+        f"New Citizen account registered for {db_user.full_name} ({db_user.email}) in state {db_user.state or 'Not specified'}.",
+        "System Alert"
+    )
+
     db.commit()
 
     return db_user
+
 
 @router.post("/login", response_model=Token)
 def login(login_in: UserLogin, db: Session = Depends(get_db)):
@@ -102,43 +125,73 @@ def logout(current_user: User = Depends(require_authenticated_user), db: Session
     db.commit()
     return {"message": "Logged out successfully"}
 
+GENERIC_FORGOT_SUCCESS_MSG = "If an account with that email address exists, password reset instructions have been sent to your email inbox."
+
 @router.post("/forgot-password")
 def forgot_password(input_data: ForgotPasswordInput, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == input_data.email).first()
-    if not user:
-        return {"message": "If account exists, password reset token has been generated.", "reset_token": "DEMO-RESET-TOKEN-123456"}
+    email_clean = input_data.email.strip().lower()
+    user = db.query(User).filter(User.email.ilike(email_clean)).first()
 
-    reset_token = secrets.token_urlsafe(32)
-    user.reset_token = reset_token
-    user.reset_token_expires = datetime.now(timezone.utc) + timedelta(hours=1)
-    db.commit()
+    if user and user.is_active:
+        raw_token = secrets.token_urlsafe(32)
+        hashed_token = hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
 
-    audit = AuditLog(
-        user_id=user.id,
-        action="PASSWORD_RESET_REQ",
-        resource="AUTH",
-        details=f"Password reset requested for {user.email}"
-    )
-    db.add(audit)
-    db.commit()
+        user.reset_token = hashed_token
+        user.reset_token_expires = datetime.now(timezone.utc) + timedelta(minutes=15)
+        db.commit()
 
-    return {
-        "message": f"Password reset token successfully generated for {user.email}.",
-        "reset_token": reset_token
-    }
+        audit = AuditLog(
+            user_id=user.id,
+            action="PASSWORD_RESET_REQ",
+            resource="AUTH",
+            details=f"Password reset requested for user {user.email}"
+        )
+        db.add(audit)
+        db.commit()
+
+        # Send reset link email asynchronously / via Resend API
+        send_password_reset_email(to_email=user.email, raw_reset_token=raw_token)
+
+    return {"message": GENERIC_FORGOT_SUCCESS_MSG}
 
 @router.post("/reset-password")
 def reset_password(input_data: ResetPasswordInput, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.reset_token == input_data.token).first()
-    if not user:
-        if input_data.token == "DEMO-RESET-TOKEN-123456":
-            user = db.query(User).filter(User.role == "Citizen").first()
-            if not user:
-                raise HTTPException(status_code=400, detail="Invalid password reset token")
-        else:
-            raise HTTPException(status_code=400, detail="Invalid or expired password reset token")
+    raw_token = (input_data.token or "").strip()
+    if not raw_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired password reset token"
+        )
 
+    if not input_data.new_password or len(input_data.new_password) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password must be at least 6 characters long"
+        )
+
+    incoming_hash = hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
+    user = db.query(User).filter(User.reset_token == incoming_hash).first()
+
+    if not user or not user.reset_token_expires:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired password reset token"
+        )
+
+    expires = user.reset_token_expires
+    if expires.tzinfo is None:
+        expires = expires.replace(tzinfo=timezone.utc)
+
+    now_utc = datetime.now(timezone.utc)
+    if now_utc > expires:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired password reset token"
+        )
+
+    # Hash new password using PolicyGPT's bcrypt security helper
     user.hashed_password = get_password_hash(input_data.new_password)
+    # Immediately invalidate token (single-use)
     user.reset_token = None
     user.reset_token_expires = None
     db.commit()
@@ -147,9 +200,10 @@ def reset_password(input_data: ResetPasswordInput, db: Session = Depends(get_db)
         user_id=user.id,
         action="PASSWORD_RESET_SUCCESS",
         resource="AUTH",
-        details=f"Password successfully reset for {user.email}"
+        details=f"Password successfully reset for user {user.email}"
     )
     db.add(audit)
     db.commit()
 
     return {"message": "Password has been successfully updated. You may now sign in."}
+

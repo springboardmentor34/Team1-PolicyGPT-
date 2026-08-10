@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     TWILIO_AUTH_TOKEN: str = "sample_token"
     TWILIO_PHONE_NUMBER: str = "+1234567890"
 
+    RESEND_API_KEY: str = ""
+    MAIL_FROM: str = "PolicyGPT <onboarding@resend.dev>"
+    FRONTEND_URL: str = "http://localhost:4200"
+
     class Config:
         env_file = ".env"
         extra = "ignore"

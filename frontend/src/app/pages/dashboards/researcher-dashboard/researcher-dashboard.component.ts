@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
@@ -24,23 +24,57 @@ import { ApiService } from '../../../core/services/api.service';
       <div class="row g-4 mb-4">
         <div class="col-md-4">
           <div class="stat-card">
-            <span class="text-muted small fw-semibold text-uppercase">Sectoral Coverage</span>
-            <div class="stat-number">10 Categories</div>
-            <span class="fs-7 text-muted">Agriculture, Health, Edu, Housing...</span>
+            <span class="text-muted small fw-semibold text-uppercase">Budget Outlay Evaluated</span>
+            <div class="stat-number text-navy">
+              ₹{{ analytics?.total_budget_evaluated | number:'1.0-0' }}
+            </div>
+            <span class="fs-7 text-muted">Active Scheme Allocations</span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="stat-card green">
-            <span class="text-muted small fw-semibold text-uppercase">Budget Outlay Evaluated</span>
-            <div class="stat-number text-success">₹260+ Billion</div>
-            <span class="fs-7 text-muted">Active Direct Benefit Transfer</span>
+            <span class="text-muted small fw-semibold text-uppercase">Search & Trend Volume</span>
+            <div class="stat-number text-success">{{ analytics?.total_searches || 0 }}</div>
+            <span class="fs-7 text-muted">Recorded Search Queries</span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="stat-card saffron">
-            <span class="text-muted small fw-semibold text-uppercase">Comparative Matrix Ready</span>
-            <div class="stat-number text-warning">Side-by-Side</div>
-            <span class="fs-7 text-muted">Multi-Ministry Policy Alignment</span>
+            <span class="text-muted small fw-semibold text-uppercase">Comparisons & Evaluations</span>
+            <div class="stat-number text-warning">{{ (analytics?.comparisons_generated || 0) + (analytics?.eligibility_evaluations || 0) }}</div>
+            <span class="fs-7 text-muted">Analytical Operations</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Research Category & Ministry Distribution Breakdown -->
+      <div *ngIf="analytics" class="gov-card p-4 mb-4">
+        <h4 class="fw-bold mb-3" style="color: var(--gov-navy-primary);"><i class="fa-solid fa-chart-column me-2"></i> Sectoral & Ministry Distribution Matrix</h4>
+        <div class="row g-4">
+          <!-- Policy Category Distribution -->
+          <div class="col-md-6">
+            <div class="p-3 border rounded bg-white">
+              <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-folder me-1 text-primary"></i> Policies by Category</h6>
+              <div class="list-group list-group-flush small">
+                <div *ngFor="let item of analytics.policy_categories | keyvalue" class="list-group-item d-flex justify-content-between align-items-center px-0 py-1.5">
+                  <span>{{ item.key }}</span>
+                  <span class="badge bg-navy text-white" style="background-color: var(--gov-navy-primary);">{{ item.value }} Policies</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scheme Category Distribution -->
+          <div class="col-md-6">
+            <div class="p-3 border rounded bg-white">
+              <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-hand-holding-medical me-1 text-warning"></i> Schemes by Category</h6>
+              <div class="list-group list-group-flush small">
+                <div *ngFor="let item of analytics.scheme_categories | keyvalue" class="list-group-item d-flex justify-content-between align-items-center px-0 py-1.5">
+                  <span>{{ item.key }}</span>
+                  <span class="badge bg-warning text-dark">{{ item.value }} Schemes</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -68,6 +102,15 @@ import { ApiService } from '../../../core/services/api.service';
   `
 })
 export class ResearcherDashboardComponent implements OnInit {
+  public analytics: any = null;
   public apiService = inject(ApiService);
-  ngOnInit() {}
+  private cdr = inject(ChangeDetectorRef);
+
+  ngOnInit() {
+    this.apiService.getResearcherAnalytics().subscribe({
+      next: (data) => { this.analytics = data; this.cdr.detectChanges(); },
+      error: () => this.cdr.detectChanges()
+    });
+  }
 }
+

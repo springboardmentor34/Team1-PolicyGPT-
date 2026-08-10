@@ -9,6 +9,8 @@ from app.core.security import get_password_hash
 
 router = APIRouter(prefix="/users", tags=["User Management"])
 
+from app.services.notification_service import create_notification
+
 @router.post("/", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def create_user_admin(
     user_in: UserCreate,
@@ -56,9 +58,19 @@ def create_user_admin(
         details=f"Admin created account for {db_user.email} with role '{db_user.role}'"
     )
     db.add(audit)
+
+    # Event Notification
+    create_notification(
+        db, db_user.id,
+        "Account Provisioned",
+        f"Welcome {db_user.full_name}! Your PolicyGPT account has been provisioned as {db_user.role}.",
+        "System Alert"
+    )
+
     db.commit()
 
     return db_user
+
 
 @router.get("/", response_model=List[UserOut])
 def get_users(
@@ -177,6 +189,15 @@ def update_user_status(
         details=f"Set user ID {user.id} active status to {user.is_active}"
     )
     db.add(audit)
+
+    # Event Notification
+    create_notification(
+        db, user.id,
+        "Account Status Alert",
+        f"Your PolicyGPT account active status is now {'Active' if user.is_active else 'Deactivated'}.",
+        "System Alert"
+    )
+
     db.commit()
 
     return user
@@ -210,9 +231,19 @@ def update_user_role(
         details=f"Changed user ID {user.id} role to {user.role}"
     )
     db.add(audit)
+
+    # Event Notification
+    create_notification(
+        db, user.id,
+        "Account Role Updated",
+        f"Your PolicyGPT account role has been updated to {user.role}.",
+        "System Alert"
+    )
+
     db.commit()
 
     return user
+
 
 @router.delete("/{user_id}")
 def delete_user(

@@ -45,6 +45,8 @@ def get_policy_by_id(policy_id: int, db: Session = Depends(get_db)):
     db.commit()
     return policy
 
+from app.services.notification_service import create_notification, notify_users_by_role, notify_users_by_roles
+
 @router.post("/", response_model=PolicyOut, status_code=status.HTTP_201_CREATED)
 def create_policy(
     policy_in: PolicyCreate,
@@ -79,6 +81,23 @@ def create_policy(
         details=f"Created policy {policy.code} - {policy.title} with status {initial_status}"
     )
     db.add(audit)
+
+    # Event Notifications
+    if initial_status == "SUBMITTED":
+        notify_users_by_role(
+            db, "Administrator",
+            f"New Policy Submitted: {policy.code}",
+            f"{current_user.full_name} ({current_user.department or 'Government Official'}) submitted '{policy.title}' for verification.",
+            "Policy Alert"
+        )
+    elif initial_status == "PUBLISHED":
+        notify_users_by_roles(
+            db, ["Citizen", "Researcher", "Organization"],
+            f"New Policy Published: {policy.code}",
+            f"Official Government Policy '{policy.title}' under {policy.ministry} is now live.",
+            "Policy Alert"
+        )
+
     db.commit()
 
     return policy
@@ -109,6 +128,15 @@ def update_policy(
         details=f"Updated policy {policy.code}"
     )
     db.add(audit)
+
+    if policy.created_by_id and policy.created_by_id != current_user.id:
+        create_notification(
+            db, policy.created_by_id,
+            f"Policy Updated: {policy.code}",
+            f"Policy '{policy.title}' was updated by {current_user.full_name}.",
+            "Policy Alert"
+        )
+
     db.commit()
 
     return policy
@@ -145,9 +173,31 @@ def update_policy_workflow_status(
         details=f"Policy {policy.code} status changed to {policy.status}"
     )
     db.add(audit)
+
+    # Event Notifications
+    if policy.created_by_id:
+        msg = f"Your policy directive '{policy.title}' ({policy.code}) status is now {policy.status}."
+        if policy.rejection_reason:
+            msg += f" Rejection reason: {policy.rejection_reason}"
+        create_notification(
+            db, policy.created_by_id,
+            f"Policy {policy.status.title()}: {policy.code}",
+            msg,
+            "Policy Alert"
+        )
+
+    if policy.status in ["APPROVED", "PUBLISHED"]:
+        notify_users_by_roles(
+            db, ["Citizen", "Researcher", "Organization"],
+            f"Policy Directives Published: {policy.code}",
+            f"Government Directive '{policy.title}' has been approved and published officially.",
+            "Policy Alert"
+        )
+
     db.commit()
 
     return policy
+
 
 @router.delete("/{policy_id}")
 def delete_policy(

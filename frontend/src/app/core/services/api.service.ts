@@ -168,8 +168,20 @@ export class ApiService {
     return this.http.get<NotificationItem[]>(`${this.baseUrl}/notifications/`);
   }
 
+  getUnreadNotificationCount(): Observable<{ unread_count: number }> {
+    return this.http.get<{ unread_count: number }>(`${this.baseUrl}/notifications/unread-count`);
+  }
+
   markNotificationRead(id: number): Observable<NotificationItem> {
     return this.http.put<NotificationItem>(`${this.baseUrl}/notifications/${id}/read`, {});
+  }
+
+  markAllNotificationsRead(): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/notifications/read-all`, {});
+  }
+
+  deleteNotification(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/notifications/${id}`);
   }
 
   sendTestAlert(title: string, message: string, alertType: string = 'Policy Alert'): Observable<any> {
@@ -183,6 +195,42 @@ export class ApiService {
     return this.http.get<any>(`${this.baseUrl}/analytics/summary`);
   }
 
+  getOverviewAnalytics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/analytics/overview`);
+  }
+
+  getUserAnalytics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/analytics/users`);
+  }
+
+  getPolicyAnalytics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/analytics/policies`);
+  }
+
+  getSchemeAnalytics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/analytics/schemes`);
+  }
+
+  getDepartmentAnalytics(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/analytics/departments`);
+  }
+
+  getOfficialAnalytics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/analytics/official`);
+  }
+
+  getResearcherAnalytics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/analytics/researcher`);
+  }
+
+  getOrganizationAnalytics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/analytics/organization`);
+  }
+
+  getUsageStatistics(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/analytics/usage`);
+  }
+
   // --- Reports & Downloads ---
   downloadPoliciesPdf(): void {
     window.open(`${this.baseUrl}/reports/policies/pdf`, '_blank');
@@ -192,9 +240,22 @@ export class ApiService {
     window.open(`${this.baseUrl}/reports/schemes/excel`, '_blank');
   }
 
+  downloadDepartmentPdf(dept?: string): void {
+    const url = dept ? `${this.baseUrl}/reports/department/pdf?dept=${encodeURIComponent(dept)}` : `${this.baseUrl}/reports/department/pdf`;
+    window.open(url, '_blank');
+  }
+
+  downloadAnalyticsPdf(): void {
+    window.open(`${this.baseUrl}/reports/analytics/pdf`, '_blank');
+  }
+
   // --- Feedback & FAQs ---
   submitFeedback(feedback: any): Observable<FeedbackItem> {
     return this.http.post<FeedbackItem>(`${this.baseUrl}/feedback/`, feedback);
+  }
+
+  getMyQueries(): Observable<FeedbackItem[]> {
+    return this.http.get<FeedbackItem[]>(`${this.baseUrl}/feedback/my-queries`);
   }
 
   getFeedbackList(search?: string, statusFilter?: string, category?: string): Observable<FeedbackItem[]> {
@@ -223,3 +284,4 @@ export class ApiService {
     return this.http.get<FAQItem[]>(`${this.baseUrl}/feedback/faqs`);
   }
 }
+

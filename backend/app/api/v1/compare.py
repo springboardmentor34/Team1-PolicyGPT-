@@ -3,8 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.models.models import Policy, Scheme
+from app.models.models import Policy, Scheme, AuditLog, User
 from app.schemas.schemas import PolicyOut, SchemeOut
+from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/compare", tags=["Policy & Scheme Comparison"])
 
@@ -19,7 +20,8 @@ class SchemeCompareRequest(BaseModel):
 def compare_policies(
     policy_ids: Optional[List[int]] = Query(None),
     body: Optional[PolicyCompareRequest] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user)
 ):
     target_ids = policy_ids or (body.policy_ids if body else [])
     if not target_ids or len(target_ids) < 2:
@@ -28,6 +30,16 @@ def compare_policies(
         raise HTTPException(status_code=400, detail="Maximum 4 policies can be compared at once")
 
     policies = db.query(Policy).filter(Policy.id.in_(target_ids)).all()
+
+    audit = AuditLog(
+        user_id=current_user.id if current_user else None,
+        action="POLICY_COMPARE",
+        resource="COMPARISON_ENGINE",
+        details=f"Compared policies: {target_ids}"
+    )
+    db.add(audit)
+    db.commit()
+
     return {
         "compared_items": [PolicyOut.model_validate(p) for p in policies],
         "comparison_matrix": {
@@ -48,7 +60,8 @@ def compare_policies(
 def compare_schemes(
     scheme_ids: Optional[List[int]] = Query(None),
     body: Optional[SchemeCompareRequest] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user)
 ):
     target_ids = scheme_ids or (body.scheme_ids if body else [])
     if not target_ids or len(target_ids) < 2:
@@ -57,6 +70,16 @@ def compare_schemes(
         raise HTTPException(status_code=400, detail="Maximum 4 schemes can be compared at once")
 
     schemes = db.query(Scheme).filter(Scheme.id.in_(target_ids)).all()
+
+    audit = AuditLog(
+        user_id=current_user.id if current_user else None,
+        action="SCHEME_COMPARE",
+        resource="COMPARISON_ENGINE",
+        details=f"Compared schemes: {target_ids}"
+    )
+    db.add(audit)
+    db.commit()
+
     return {
         "compared_items": [SchemeOut.model_validate(s) for s in schemes],
         "comparison_matrix": {
@@ -71,3 +94,4 @@ def compare_schemes(
             "status": [s.status for s in schemes]
         }
     }
+

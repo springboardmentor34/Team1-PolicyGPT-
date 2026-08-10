@@ -1,8 +1,10 @@
 import time
 from fastapi.testclient import TestClient
-from app.main import app
+from app.main import app, startup_db_seed
 
+startup_db_seed()
 client = TestClient(app)
+
 
 def test_root_endpoint():
     response = client.get("/")
@@ -117,6 +119,76 @@ def test_notifications_authenticated():
     assert notif_res.status_code == 200
     assert isinstance(notif_res.json(), list)
 
+def test_notification_full_lifecycle_and_user_isolation():
+    # 1. Login Accounts
+    cit_res = client.post("/api/v1/auth/login", json={"email": "citizen@policygpt.gov.in", "password": "Citizen@123456"})
+    cit_token = cit_res.json()["access_token"]
+    cit_headers = {"Authorization": f"Bearer {cit_token}"}
+
+    adm_res = client.post("/api/v1/auth/login", json={"email": "admin@policygpt.gov.in", "password": "Admin@123456"})
+    adm_token = adm_res.json()["access_token"]
+    adm_headers = {"Authorization": f"Bearer {adm_token}"}
+
+    off_res = client.post("/api/v1/auth/login", json={"email": "official@policygpt.gov.in", "password": "Official@123456"})
+    off_token = off_res.json()["access_token"]
+    off_headers = {"Authorization": f"Bearer {off_token}"}
+
+    # 2. Citizen Submits Inquiry -> Triggers Admin Notification & Citizen Confirmation
+    fb_res = client.post("/api/v1/feedback/", json={
+        "subject": "End-to-End Notification Test",
+        "category": "General Enquiry",
+        "message": "Testing automatic event-driven notifications."
+    }, headers=cit_headers)
+    assert fb_res.status_code == 201
+    fb_id = fb_res.json()["id"]
+
+    # Check Citizen received Inquiry Received notification
+    cit_notifs_res = client.get("/api/v1/notifications/", headers=cit_headers)
+    assert cit_notifs_res.status_code == 200
+    cit_notifs = cit_notifs_res.json()
+    assert any("Inquiry Submitted" in n["title"] for n in cit_notifs)
+
+    # Check Admin received New Support Inquiry notification
+    adm_notifs_res = client.get("/api/v1/notifications/", headers=adm_headers)
+    assert adm_notifs_res.status_code == 200
+    adm_notifs = adm_notifs_res.json()
+    assert any("New Support Inquiry" in n["title"] for n in adm_notifs)
+
+    # 3. Admin Responds to Inquiry -> Triggers Citizen Notification
+    resp_res = client.put(f"/api/v1/feedback/{fb_id}/respond?response_text=Resolved+by+Admin&status_update=RESOLVED", headers=adm_headers)
+    assert resp_res.status_code == 200
+
+    cit_notifs_res2 = client.get("/api/v1/notifications/", headers=cit_headers)
+    cit_notifs2 = cit_notifs_res2.json()
+    assert any("Support Ticket Update" in n["title"] for n in cit_notifs2)
+
+    # 4. Unread Count & Mark Read / Mark All Read
+    unread_res = client.get("/api/v1/notifications/unread-count", headers=cit_headers)
+    assert unread_res.status_code == 200
+    assert unread_res.json()["unread_count"] > 0
+
+    first_notif_id = cit_notifs2[0]["id"]
+    mark_res = client.put(f"/api/v1/notifications/{first_notif_id}/read", headers=cit_headers)
+    assert mark_res.status_code == 200
+    assert mark_res.json()["is_read"] is True
+
+    mark_all_res = client.put("/api/v1/notifications/read-all", headers=cit_headers)
+    assert mark_all_res.status_code == 200
+    assert mark_all_res.json()["message"] == "All notifications marked as read"
+
+    unread_res2 = client.get("/api/v1/notifications/unread-count", headers=cit_headers)
+    assert unread_res2.json()["unread_count"] == 0
+
+    # 5. Delete Notification & User Isolation Verification
+    del_res = client.delete(f"/api/v1/notifications/{first_notif_id}", headers=cit_headers)
+    assert del_res.status_code == 200
+
+    # Verification: Government Official CANNOT access or delete Citizen's private notification
+    if len(cit_notifs2) > 1:
+        other_cit_notif_id = cit_notifs2[1]["id"]
+        unauth_del_res = client.delete(f"/api/v1/notifications/{other_cit_notif_id}", headers=off_headers)
+        assert unauth_del_res.status_code == 404
+
 def test_feedback_submission():
     response = client.post("/api/v1/feedback/", json={
         "user_name": "Test User",
@@ -127,3 +199,4 @@ def test_feedback_submission():
     })
     assert response.status_code == 201
     assert response.json()["status"] == "OPEN"
+

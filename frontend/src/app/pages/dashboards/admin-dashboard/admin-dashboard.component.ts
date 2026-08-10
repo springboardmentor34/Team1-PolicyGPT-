@@ -536,8 +536,119 @@ import { Policy, Scheme, User, FeedbackItem } from '../../../core/models/models'
       </div>
 
       <!-- ============================================================ -->
-      <!-- MODAL: RESPOND TO SUPPORT INQUIRY -->
+      <!-- SECTION 8: DEPARTMENT ANALYTICS & COMPARISON -->
       <!-- ============================================================ -->
+
+      <div class="gov-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h4 class="fw-bold mb-0" style="color: var(--gov-navy-primary);"><i class="fa-solid fa-building-columns me-2"></i> Department Analytics & Comparative Metrics</h4>
+            <p class="text-muted small mb-0">Overview of policies, schemes, and official personnel across government departments.</p>
+          </div>
+          <button (click)="apiService.downloadDepartmentPdf()" class="btn btn-outline-primary btn-sm">
+            <i class="fa-solid fa-file-pdf me-1"></i> Department PDF Report
+          </button>
+        </div>
+
+        <div *ngIf="loadingDepts" class="p-4 text-center text-muted">
+          <div class="spinner-border spinner-border-sm text-secondary me-2"></div>
+          <span>Loading department analytics from PostgreSQL...</span>
+        </div>
+        <div *ngIf="!loadingDepts" class="table-responsive">
+          <table class="table table-hover align-middle mb-0 small">
+            <thead class="table-light">
+              <tr>
+                <th>Department Name</th><th>Total Directives</th><th>Published Directives</th><th>Assigned Officials</th><th>Export</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="departmentAnalytics.length === 0">
+                <td colspan="5" class="text-center py-3 text-muted">No department data found.</td>
+              </tr>
+              <tr *ngFor="let dept of departmentAnalytics">
+                <td class="fw-bold text-dark">{{ dept.department }}</td>
+                <td><span class="badge bg-secondary">{{ dept.total_policies }}</span></td>
+                <td><span class="badge bg-success">{{ dept.published_policies }}</span></td>
+                <td><span class="badge bg-info text-dark">{{ dept.officials_count }} Officials</span></td>
+                <td>
+                  <button (click)="apiService.downloadDepartmentPdf(dept.department)" class="btn btn-sm btn-light border px-2">
+                    <i class="fa-solid fa-download text-danger me-1"></i> PDF
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- SECTION 9: REAL SYSTEM USAGE STATISTICS -->
+      <!-- ============================================================ -->
+      <div class="gov-card p-4 mb-4">
+        <h4 class="fw-bold mb-3" style="color: var(--gov-navy-primary);"><i class="fa-solid fa-chart-line me-2"></i> System Usage Statistics & Search Activity</h4>
+        <div *ngIf="loadingUsage" class="p-4 text-center text-muted">
+          <div class="spinner-border spinner-border-sm text-secondary me-2"></div>
+          <span>Loading usage statistics...</span>
+        </div>
+        <div *ngIf="!loadingUsage && usageStats" class="row g-4">
+          <div class="col-md-3">
+            <div class="p-3 bg-light rounded border text-center">
+              <span class="text-muted fs-7 font-monospace fw-semibold text-uppercase">Total Policy Searches</span>
+              <h3 class="fw-bold text-primary mb-0 mt-1">{{ usageStats.total_searches }}</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="p-3 bg-light rounded border text-center">
+              <span class="text-muted fs-7 font-monospace fw-semibold text-uppercase">Eligibility Checks</span>
+              <h3 class="fw-bold text-success mb-0 mt-1">{{ usageStats.eligibility_check_count }}</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="p-3 bg-light rounded border text-center">
+              <span class="text-muted fs-7 font-monospace fw-semibold text-uppercase">Schemes Compared</span>
+              <h3 class="fw-bold text-warning mb-0 mt-1">{{ usageStats.comparison_count }}</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="p-3 bg-light rounded border text-center">
+              <span class="text-muted fs-7 font-monospace fw-semibold text-uppercase">Reports Generated</span>
+              <h3 class="fw-bold text-info mb-0 mt-1">{{ usageStats.report_generation_count }}</h3>
+            </div>
+          </div>
+
+          <!-- Top Search Keywords -->
+          <div class="col-md-6">
+            <div class="p-3 border rounded bg-white">
+              <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-fire me-1 text-danger"></i> Top Search Queries</h6>
+              <div *ngIf="usageStats.top_search_terms?.length === 0" class="text-muted small">No searches recorded yet.</div>
+              <ul class="list-group list-group-flush small">
+                <li *ngFor="let item of usageStats.top_search_terms" class="list-group-item d-flex justify-content-between align-items-center px-0 py-1.5">
+                  <span class="fw-medium text-dark">{{ item.query }}</span>
+                  <span class="badge bg-primary rounded-pill">{{ item.count }} searches</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Recent Searches Stream -->
+          <div class="col-md-6">
+            <div class="p-3 border rounded bg-white">
+              <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-clock-rotate-left me-1 text-secondary"></i> Recent Search Activity Stream</h6>
+              <div *ngIf="usageStats.recent_searches?.length === 0" class="text-muted small">No recent searches.</div>
+              <ul class="list-group list-group-flush small">
+                <li *ngFor="let s of usageStats.recent_searches" class="list-group-item d-flex justify-content-between align-items-center px-0 py-1.5">
+                  <div>
+                    <strong class="text-dark">{{ s.query || 'Category Filter' }}</strong>
+                    <span class="text-muted ms-2 fs-8">({{ s.results }} results)</span>
+                  </div>
+                  <span class="text-muted fs-8">{{ s.time | date:'shortTime' }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div *ngIf="showQueryModal" class="modal d-block" style="background: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg modal-dialog-centered">
           <div class="modal-content p-4 gov-card border-0">
@@ -930,6 +1041,8 @@ export class AdminDashboardComponent implements OnInit {
   public users: User[] = [];
   public categories: any[] = [];
   public queries: FeedbackItem[] = [];
+  public departmentAnalytics: any[] = [];
+  public usageStats: any = null;
 
   // Loading states
   public loadingStats = true;
@@ -938,6 +1051,8 @@ export class AdminDashboardComponent implements OnInit {
   public loadingSchemes = true;
   public loadingUsers = true;
   public loadingQueries = true;
+  public loadingDepts = true;
+  public loadingUsage = true;
 
   // Modal visibility
   public showCategoryModal = false;
@@ -955,8 +1070,6 @@ export class AdminDashboardComponent implements OnInit {
   public userEditError: string | null = null;
   public successMessage: string | null = null;
   public activeQuery: FeedbackItem | null = null;
-
-
 
   // Filters
   public policySearch = '';
@@ -1020,9 +1133,28 @@ export class AdminDashboardComponent implements OnInit {
     this.fetchUsers();
     this.fetchCategories();
     this.fetchQueries();
+    this.fetchDepartmentAnalytics();
+    this.fetchUsageStats();
+  }
+
+  fetchDepartmentAnalytics() {
+    this.loadingDepts = true;
+    this.apiService.getDepartmentAnalytics().subscribe({
+      next: (data) => { this.departmentAnalytics = data || []; this.loadingDepts = false; this.cdr.detectChanges(); },
+      error: () => { this.loadingDepts = false; this.cdr.detectChanges(); }
+    });
+  }
+
+  fetchUsageStats() {
+    this.loadingUsage = true;
+    this.apiService.getUsageStatistics().subscribe({
+      next: (data) => { this.usageStats = data; this.loadingUsage = false; this.cdr.detectChanges(); },
+      error: () => { this.loadingUsage = false; this.cdr.detectChanges(); }
+    });
   }
 
   fetchStats() {
+
     this.loadingStats = true;
     this.apiService.getAnalyticsSummary().subscribe({
       next: (data) => { this.stats = data; this.loadingStats = false; this.cdr.detectChanges(); },

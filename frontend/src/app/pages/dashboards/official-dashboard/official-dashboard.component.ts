@@ -81,9 +81,29 @@ import { Policy, Scheme } from '../../../core/models/models';
         </div>
       </div>
 
+      <!-- Department Analytics & Quick Export Card -->
+      <div class="gov-card p-4 mb-4" *ngIf="deptAnalytics">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+          <div>
+            <h4 class="fw-bold mb-1" style="color: var(--gov-navy-primary);"><i class="fa-solid fa-chart-column me-2"></i> {{ deptAnalytics.department }} Analytics Overview</h4>
+            <p class="text-muted small mb-0">Live department metrics: {{ deptAnalytics.policies_count }} policies, {{ deptAnalytics.schemes_count }} schemes, and {{ deptAnalytics.total_views }} aggregate policy views.</p>
+          </div>
+          <div class="d-flex gap-2">
+            <button (click)="apiService.downloadDepartmentPdf(deptAnalytics.department)" class="btn btn-gov-navy btn-sm">
+              <i class="fa-solid fa-file-pdf me-1"></i> Export Department PDF
+            </button>
+            <button (click)="apiService.downloadSchemesExcel()" class="btn btn-gov-saffron btn-sm">
+              <i class="fa-solid fa-file-excel me-1"></i> Schemes Excel
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- ============================================================ -->
       <!-- DEPARTMENT POLICY REPOSITORY -->
       <!-- ============================================================ -->
+
       <div class="gov-card p-4 mb-4">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
           <h4 class="fw-bold mb-0" style="color: var(--gov-navy-primary);"><i class="fa-solid fa-file-contract me-2"></i> Department Policy Repository</h4>
@@ -501,11 +521,13 @@ export class OfficialDashboardComponent implements OnInit {
     location_type: 'All', disability_required: false
   };
 
+  public deptAnalytics: any = null;
+
   get loadingData(): boolean {
     return this.loadingPolicies || this.loadingSchemes || this.loadingCategories;
   }
 
-  private apiService = inject(ApiService);
+  public apiService = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
@@ -517,9 +539,18 @@ export class OfficialDashboardComponent implements OnInit {
     this.fetchPolicies();
     this.fetchSchemes();
     this.fetchCategories();
+    this.fetchOfficialAnalytics();
+  }
+
+  fetchOfficialAnalytics() {
+    this.apiService.getOfficialAnalytics().subscribe({
+      next: (data) => { this.deptAnalytics = data; this.cdr.detectChanges(); },
+      error: () => this.cdr.detectChanges()
+    });
   }
 
   fetchPolicies() {
+
     this.loadingPolicies = true;
     this.apiService.getPolicies().subscribe({
       next: (data) => {

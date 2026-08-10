@@ -59,26 +59,24 @@ def startup_db_seed():
         print("✓ PolicyGPT backend ready")
         print("========================================\n")
 
-        # Auto-seed default Administrator if not present
-        admin = db.query(User).filter(User.email == "admin@policygpt.gov.in").first()
-        if not admin:
-            admin_user = User(
+        users_to_seed = [
+            User(
                 full_name="System Administrator",
                 email="admin@policygpt.gov.in",
                 hashed_password=get_password_hash("Admin@123456"),
                 role="Administrator",
                 department="Ministry of Electronics & IT",
                 state="New Delhi"
-            )
-            official_user = User(
+            ),
+            User(
                 full_name="Dr. Rajesh Verma",
                 email="official@policygpt.gov.in",
                 hashed_password=get_password_hash("Official@123456"),
                 role="Government Official",
                 department="Department of Agriculture",
                 state="Uttar Pradesh"
-            )
-            citizen_user = User(
+            ),
+            User(
                 full_name="Priya Sharma",
                 email="citizen@policygpt.gov.in",
                 hashed_password=get_password_hash("Citizen@123456"),
@@ -90,12 +88,33 @@ def startup_db_seed():
                 gender="Female",
                 education_level="Graduate",
                 social_category="OBC"
+            ),
+            User(
+                full_name="Prof. Anita Roy",
+                email="researcher@policygpt.gov.in",
+                hashed_password=get_password_hash("Researcher@123456"),
+                role="Researcher",
+                department="Policy Research Institute",
+                state="Delhi"
+            ),
+            User(
+                full_name="AgroTech Solutions NGO",
+                email="org@policygpt.gov.in",
+                hashed_password=get_password_hash("Org@123456"),
+                role="Organization",
+                department="Welfare & Agri Development",
+                state="Karnataka"
             )
-            db.add_all([admin_user, official_user, citizen_user])
-            db.commit()
+        ]
+        for u in users_to_seed:
+            existing = db.query(User).filter(User.email == u.email).first()
+            if not existing:
+                db.add(u)
+        db.commit()
 
-            # Seed sample policies if empty
-            if db.query(Policy).count() == 0:
+        # Seed sample policies if empty
+        if db.query(Policy).count() == 0:
+
                 pol1 = Policy(
                     title="National Agricultural & Farmer Support Policy 2024",
                     code="POL-AGRI-2024-01",

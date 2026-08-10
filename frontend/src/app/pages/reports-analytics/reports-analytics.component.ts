@@ -16,32 +16,59 @@ import { ApiService } from '../../core/services/api.service';
 
       <!-- Quick Export Cards -->
       <div class="row g-4 mb-4">
-        <div class="col-md-6">
+        <div class="col-md-6 col-xl-3">
           <div class="gov-card p-4 text-center h-100 d-flex flex-column justify-content-between">
             <div>
-              <i class="fa-solid fa-file-pdf text-danger display-4 mb-3"></i>
-              <h4 class="fw-bold text-dark mb-2">Policy Directive PDF Report</h4>
-              <p class="text-secondary small mb-4">Generates an official document summarizing all approved national policies, ministry allocations, and operational codes.</p>
+              <i class="fa-solid fa-file-pdf text-danger display-5 mb-3"></i>
+              <h5 class="fw-bold text-dark mb-2">Policy Directive PDF</h5>
+              <p class="text-secondary small mb-3">Summary of approved national policies and ministry allocations.</p>
             </div>
-            <button (click)="apiService.downloadPoliciesPdf()" class="btn btn-gov-navy py-2.5 fw-bold">
-              <i class="fa-solid fa-download me-2"></i> Download Official Policy PDF
+            <button (click)="apiService.downloadPoliciesPdf()" class="btn btn-gov-navy btn-sm fw-bold">
+              <i class="fa-solid fa-download me-1"></i> Policy PDF
             </button>
           </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 col-xl-3">
           <div class="gov-card p-4 text-center h-100 d-flex flex-column justify-content-between">
             <div>
-              <i class="fa-solid fa-file-excel text-success display-4 mb-3"></i>
-              <h4 class="fw-bold text-dark mb-2">Public Scheme Dataset (Excel XLSX)</h4>
-              <p class="text-secondary small mb-4">Exports complete tabular spreadsheet data of active schemes, budget outlays, financial assistance limits, and deadlines.</p>
+              <i class="fa-solid fa-file-excel text-success display-5 mb-3"></i>
+              <h5 class="fw-bold text-dark mb-2">Scheme Dataset (Excel)</h5>
+              <p class="text-secondary small mb-3">Tabular spreadsheet of active schemes, budgets, and deadlines.</p>
             </div>
-            <button (click)="apiService.downloadSchemesExcel()" class="btn btn-gov-saffron py-2.5 fw-bold">
-              <i class="fa-solid fa-file-excel me-2"></i> Download Scheme Excel Dataset
+            <button (click)="apiService.downloadSchemesExcel()" class="btn btn-gov-saffron btn-sm fw-bold">
+              <i class="fa-solid fa-file-excel me-1"></i> Scheme Excel
+            </button>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+          <div class="gov-card p-4 text-center h-100 d-flex flex-column justify-content-between">
+            <div>
+              <i class="fa-solid fa-building-columns text-primary display-5 mb-3"></i>
+              <h5 class="fw-bold text-dark mb-2">Department PDF</h5>
+              <p class="text-secondary small mb-3">Department-specific policy directives and scheme breakdown.</p>
+            </div>
+            <button (click)="apiService.downloadDepartmentPdf()" class="btn btn-outline-primary btn-sm fw-bold">
+              <i class="fa-solid fa-download me-1"></i> Department PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+          <div class="gov-card p-4 text-center h-100 d-flex flex-column justify-content-between">
+            <div>
+              <i class="fa-solid fa-chart-pie text-warning display-5 mb-3"></i>
+              <h5 class="fw-bold text-dark mb-2">Executive Analytics PDF</h5>
+              <p class="text-secondary small mb-3">System-wide executive summary of users, policies, and schemes.</p>
+            </div>
+            <button (click)="apiService.downloadAnalyticsPdf()" class="btn btn-warning text-dark btn-sm fw-bold">
+              <i class="fa-solid fa-download me-1"></i> Analytics PDF
             </button>
           </div>
         </div>
       </div>
+
 
       <!-- Global Summary Cards -->
       <div *ngIf="summary" class="gov-card p-4">

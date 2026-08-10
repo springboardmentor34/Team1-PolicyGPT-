@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { ApiService } from '../../core/services/api.service';
 
 @Component({
   selector: 'app-header',
@@ -67,7 +68,7 @@ import { ThemeService } from '../../core/services/theme.service';
         <!-- User Identity Card -->
         <div class="sidebar-user-card">
           <div class="d-flex align-items-center gap-3">
-            <div class="sidebar-user-avatar">
+            <div class="sidebar-user-avatar position-relative">
               {{ user.full_name.charAt(0).toUpperCase() }}
             </div>
             <div class="overflow-hidden">
@@ -83,9 +84,12 @@ import { ThemeService } from '../../core/services/theme.service';
         <div class="sidebar-menu-title">Main Menu</div>
 
         <!-- Role Dashboard Link -->
-        <a [routerLink]="getDashboardRoute(user.role)" routerLinkActive="active" class="sidebar-link">
-          <i class="fa-solid fa-gauge"></i>
-          <span>Dashboard</span>
+        <a [routerLink]="getDashboardRoute(user.role)" routerLinkActive="active" class="sidebar-link d-flex justify-content-between align-items-center">
+          <div>
+            <i class="fa-solid fa-gauge"></i>
+            <span>Dashboard</span>
+          </div>
+          <span *ngIf="unreadCount > 0" class="badge bg-danger rounded-pill px-2 py-1 fs-8">{{ unreadCount }}</span>
         </a>
 
         <!-- Feature Modules Links -->
@@ -135,9 +139,21 @@ import { ThemeService } from '../../core/services/theme.service';
     </aside>
   `
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   public authService = inject(AuthService);
   public themeService = inject(ThemeService);
+  private apiService = inject(ApiService);
+
+  public unreadCount = 0;
+
+  ngOnInit() {
+    if (this.authService.isAuthenticated()) {
+      this.apiService.getUnreadNotificationCount().subscribe({
+        next: (res) => this.unreadCount = res.unread_count,
+        error: () => {}
+      });
+    }
+  }
 
   getDashboardRoute(role: string): string {
     switch (role) {
@@ -156,3 +172,4 @@ export class HeaderComponent {
     }
   }
 }
+

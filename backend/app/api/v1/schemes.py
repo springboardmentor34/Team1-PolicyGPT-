@@ -29,6 +29,8 @@ def get_scheme_by_id(scheme_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Scheme not found")
     return scheme
 
+from app.services.notification_service import create_notification, notify_users_by_roles
+
 @router.post("/", response_model=SchemeOut, status_code=status.HTTP_201_CREATED)
 def create_scheme(
     scheme_in: SchemeCreate,
@@ -58,6 +60,15 @@ def create_scheme(
         details=f"Registered public scheme {scheme.code} - {scheme.name}"
     )
     db.add(audit)
+
+    # Event Notification
+    notify_users_by_roles(
+        db, ["Citizen", "Organization"],
+        f"New Scheme Launched: {scheme.code}",
+        f"New public welfare scheme '{scheme.name}' ({scheme.category}) has been launched. Benefits: {scheme.benefits or 'Direct benefit support'}.",
+        "Scheme Alert"
+    )
+
     db.commit()
 
     return scheme
@@ -97,9 +108,19 @@ def update_scheme(
         details=f"Updated public scheme {scheme.code}"
     )
     db.add(audit)
+
+    # Event Notification
+    notify_users_by_roles(
+        db, ["Citizen", "Organization"],
+        f"Scheme Guidelines Updated: {scheme.code}",
+        f"Public scheme '{scheme.name}' guidelines have been updated.",
+        "Scheme Alert"
+    )
+
     db.commit()
 
     return scheme
+
 
 @router.post("/{scheme_id}/archive", response_model=SchemeOut)
 def archive_scheme(

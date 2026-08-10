@@ -85,7 +85,7 @@ import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.di
     </div>
 
     <!-- Latest Schemes Horizontal Marquee Ticker Section -->
-    <div class="scheme-ticker-section d-flex align-items-stretch" *ngIf="allSchemes.length > 0">
+    <div class="scheme-ticker-section d-flex align-items-stretch">
       <div class="scheme-ticker-label">
         <i class="fa-solid fa-bullhorn me-1"></i>
         <span>Latest Schemes</span>
@@ -97,7 +97,7 @@ import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.di
               <span class="ticker-dot"></span>
               <span class="ticker-category">[{{ scheme.category || 'Welfare' }}]</span>
               <strong class="text-white">{{ scheme.name }}</strong>
-              <span class="opacity-75 small ms-1" *ngIf="scheme.benefits">- {{ scheme.benefits | slice:0:40 }}</span>
+              <span class="opacity-75 small ms-1" *ngIf="scheme.benefits">- {{ scheme.benefits | slice:0:45 }}</span>
             </a>
             <span class="scheme-ticker-divider">•</span>
           </ng-container>
@@ -310,7 +310,47 @@ import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.di
 export class PublicDashboardComponent implements OnInit {
   public schemes: Scheme[] = [];
   public policies: Policy[] = [];
-  public allSchemes: Scheme[] = [];
+  public allSchemes: Scheme[] = [
+    {
+      id: 1,
+      name: 'PM-KISAN Samman Nidhi Scheme',
+      code: 'SCH-AGRI-001',
+      category: 'Farmer Welfare',
+      description: 'Direct income support scheme providing ₹6,000 per year to landholding farmer families across India.',
+      benefits: '₹6,000 direct benefit transfer (DBT) annually into bank accounts',
+      target_group: 'Small and marginal landholding farmers',
+      application_process: 'Apply online at PM-KISAN portal with Aadhaar card and land records.',
+      application_link: 'https://pmkisan.gov.in',
+      status: 'Active',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 2,
+      name: 'Ayushman Bharat PM-JAY',
+      code: 'SCH-HLTH-002',
+      category: 'Healthcare',
+      description: 'Health insurance scheme providing health cover of ₹5 Lakhs per family per year.',
+      benefits: 'Cashless secondary and tertiary healthcare hospitalization',
+      target_group: 'Low-income households',
+      application_process: 'Check eligibility online or visit nearest Ayushman Mitra center.',
+      application_link: 'https://pmjay.gov.in',
+      status: 'Active',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 3,
+      name: 'Post-Matric Scholarship for Higher Education',
+      code: 'SCH-EDU-003',
+      category: 'Scholarships',
+      description: 'Financial scholarship assistance to students pursuing post-secondary studies.',
+      benefits: 'Full tuition reimbursement + monthly maintenance allowance',
+      target_group: 'Students pursuing Diploma, UG, or PG degrees',
+      application_process: 'Submit application through National Scholarship Portal (NSP).',
+      application_link: 'https://scholarships.gov.in',
+      status: 'Active',
+      created_at: new Date().toISOString()
+    }
+  ];
   public selectedScheme: Scheme | null = null;
   
   private apiService = inject(ApiService);
@@ -318,12 +358,24 @@ export class PublicDashboardComponent implements OnInit {
 
   ngOnInit() {
     // Load real scheme and policy records from PostgreSQL API
-    this.apiService.getSchemes().subscribe(data => {
-      this.allSchemes = data || [];
-      this.schemes = this.allSchemes.slice(0, 3);
+    this.apiService.getSchemes().subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          this.allSchemes = data;
+          this.schemes = this.allSchemes.slice(0, 3);
+        }
+      },
+      error: () => {
+        // Keep initial fallback schemes
+        this.schemes = this.allSchemes.slice(0, 3);
+      }
     });
-    this.apiService.getPolicies({ status: 'PUBLISHED' }).subscribe(data => {
-      this.policies = (data || []).slice(0, 3);
+    this.apiService.getPolicies({ status: 'PUBLISHED' }).subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          this.policies = data.slice(0, 3);
+        }
+      }
     });
   }
 

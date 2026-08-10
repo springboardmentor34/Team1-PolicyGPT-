@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 
@@ -68,6 +68,7 @@ export class ForgotPasswordComponent {
   public successMessage = '';
   public errorMessage = '';
 
+  private router = inject(Router);
   private apiService = inject(ApiService);
 
   onSubmit() {
@@ -91,7 +92,8 @@ export class ForgotPasswordComponent {
       )
       .subscribe({
         next: (res: any) => {
-          this.successMessage = res.message || 'Password reset instructions have been sent to your email address.';
+          // Immediately redirect to reset-password page with email sent notification
+          this.router.navigate(['/reset-password'], { queryParams: { sent: 'true' } });
         },
         error: (err) => {
           this.errorMessage = err?.error?.detail || 'Request failed. Please check network connection and try again.';

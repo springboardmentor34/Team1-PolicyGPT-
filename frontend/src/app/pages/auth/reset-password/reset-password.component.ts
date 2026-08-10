@@ -21,6 +21,18 @@ import { ApiService } from '../../../core/services/api.service';
               <p class="text-muted small">Choose a secure new password for your PolicyGPT account.</p>
             </div>
 
+            <!-- Email Link Sent Banner -->
+            <div *ngIf="infoMessage" class="alert alert-info small py-3 mb-3 border-0 shadow-sm" role="alert" style="background-color: #e8f4fd; border-left: 4px solid #0288d1 !important; color: #014361;">
+              <div class="d-flex align-items-start">
+                <i class="fa-solid fa-envelope-circle-check fs-5 me-2 mt-0.5 text-primary"></i>
+                <div>
+                  <strong>Check Your Email Inbox!</strong>
+                  <div class="mt-1">{{ infoMessage }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Success Banner -->
             <div *ngIf="successMessage" class="alert alert-success small py-3 mb-3" role="alert">
               <div class="d-flex align-items-start">
                 <i class="fa-solid fa-circle-check fs-5 me-2 mt-0.5"></i>
@@ -34,6 +46,7 @@ import { ApiService } from '../../../core/services/api.service';
               </a>
             </div>
 
+            <!-- Error Banner -->
             <div *ngIf="errorMessage" class="alert alert-danger small py-2 mb-3" role="alert">
               <i class="fa-solid fa-circle-exclamation me-1"></i> {{ errorMessage }}
             </div>
@@ -42,7 +55,7 @@ import { ApiService } from '../../../core/services/api.service';
               <div class="mb-3">
                 <label class="form-label fw-medium small text-dark"><i class="fa-solid fa-key me-1 text-muted"></i> Reset Token *</label>
                 <input type="text" [(ngModel)]="token" name="token" class="form-control" placeholder="Paste reset token..." required>
-                <div *ngIf="!token" class="form-text text-muted fs-7">Token is automatically populated from your email link.</div>
+                <div *ngIf="!token" class="form-text text-muted fs-7">Token is automatically populated when you click the link in your email.</div>
               </div>
 
               <!-- Password with Show/Hide Eye Toggle -->
@@ -92,6 +105,7 @@ export class ResetPasswordComponent implements OnInit {
   public loading = false;
   public errorMessage = '';
   public successMessage = '';
+  public infoMessage = '';
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -102,12 +116,15 @@ export class ResetPasswordComponent implements OnInit {
       if (params['token']) {
         this.token = params['token'].trim();
       }
+      if (params['sent'] === 'true') {
+        this.infoMessage = 'Password reset instructions have been sent to your email! Please check your inbox for the email link, or enter your reset token below to update your password.';
+      }
     });
   }
 
   onReset() {
     if (!this.token) {
-      this.errorMessage = 'Password reset token is missing. Please check your reset link.';
+      this.errorMessage = 'Password reset token is missing. Please check your reset link or paste your token.';
       return;
     }
     if (!this.newPassword || this.newPassword.length < 6) {
@@ -126,6 +143,7 @@ export class ResetPasswordComponent implements OnInit {
     this.apiService.resetPassword(this.token, this.newPassword).subscribe({
       next: (res: any) => {
         this.loading = false;
+        this.infoMessage = '';
         this.successMessage = res.message || 'Your password has been successfully updated. You may now sign in.';
       },
       error: (err) => {

@@ -803,7 +803,7 @@ body.theme-dark .alert-success {
 
 /* ---------- Scheme Ticker / Marquee ---------- */
 .scheme-ticker-section {
-  background: linear-gradient(135deg, #0b192c 0%, #1e3e62 100%);
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 100%);
   border-top: 2px solid var(--gov-saffron);
   border-bottom: 2px solid rgba(217,119,6,0.35);
   padding: 0;
@@ -856,11 +856,11 @@ body.theme-dark .alert-success {
 }
 .scheme-ticker-track-wrap::before {
   left: 0;
-  background: linear-gradient(to right, #0b192c, transparent);
+  background: linear-gradient(to right, #022c22, transparent);
 }
 .scheme-ticker-track-wrap::after {
   right: 0;
-  background: linear-gradient(to left, #0b192c, transparent);
+  background: linear-gradient(to left, #064e3b, transparent);
 }
 .scheme-ticker-track {
   display: flex;

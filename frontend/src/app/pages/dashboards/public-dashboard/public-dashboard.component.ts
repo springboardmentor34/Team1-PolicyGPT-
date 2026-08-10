@@ -12,16 +12,16 @@ import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.di
   template: `
     <!-- Hero Banner Section -->
     <div class="text-white position-relative overflow-hidden d-flex align-items-center"
-         style="background: linear-gradient(135deg, #0b192c 0%, #1e3e62 60%, #0b2d52 100%);
+         style="background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #047857 100%);
                 border-bottom: 3px solid var(--gov-saffron);
                 min-height: calc(100vh - 72px);">
 
       <!-- Decorative background glow circles -->
-      <div style="position:absolute;width:600px;height:600px;border-radius:50%;
-                  background:radial-gradient(circle,rgba(217,119,6,0.10) 0%,transparent 70%);
+      <div style="position:absolute;width:650px;height:650px;border-radius:50%;
+                  background:radial-gradient(circle,rgba(245,158,11,0.18) 0%,transparent 70%);
                   top:-150px;right:-100px;pointer-events:none;"></div>
-      <div style="position:absolute;width:400px;height:400px;border-radius:50%;
-                  background:radial-gradient(circle,rgba(30,62,98,0.5) 0%,transparent 70%);
+      <div style="position:absolute;width:450px;height:450px;border-radius:50%;
+                  background:radial-gradient(circle,rgba(6,78,59,0.6) 0%,transparent 70%);
                   bottom:-80px;left:-60px;pointer-events:none;"></div>
 
       <div class="container py-5">
@@ -44,7 +44,7 @@ import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.di
             </div>
             <!-- Trust badges row -->
             <div class="d-flex flex-wrap gap-4 text-light opacity-75">
-              <span class="small"><i class="fa-solid fa-shield-check me-1 text-warning"></i> Secure & Verified</span>
+              <span class="small"><i class="fa-solid fa-shield-check me-1 text-warning"></i> Secure &amp; Verified</span>
               <span class="small"><i class="fa-solid fa-landmark me-1 text-warning"></i> Government of India</span>
               <span class="small"><i class="fa-solid fa-users me-1 text-warning"></i> 5+ User Roles Supported</span>
             </div>
@@ -56,7 +56,7 @@ import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.di
                    style="background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);">
                 <div class="text-center mb-4">
                   <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
-                       style="width:64px;height:64px;background:linear-gradient(135deg,#0b192c,#1e3e62);">
+                       style="width:64px;height:64px;background:linear-gradient(135deg,#022c22,#047857);">
                     <i class="fa-solid fa-shield-halved text-white fs-3"></i>
                   </div>
                   <h4 class="fw-bold mb-2" style="color: var(--gov-navy-primary);">Institutional Intelligence</h4>

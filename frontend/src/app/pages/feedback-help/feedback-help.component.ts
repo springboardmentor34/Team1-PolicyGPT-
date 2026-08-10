@@ -4,14 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { FAQItem, FeedbackItem } from '../../core/models/models';
+import { ScrollRevealDirective } from '../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-feedback-help',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
-      <div class="mb-4">
+      <div appScrollReveal class="mb-4">
         <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill mb-2"><i class="fa-solid fa-comments me-1"></i> CITIZEN SUPPORT & HELP DESK</span>
         <h2 class="fw-bold" style="color: var(--gov-navy-primary);">Feedback & Frequently Asked Questions</h2>
         <p class="text-muted">Submit policy inquiries, report issues, track live query resolution progress, or search portal FAQs.</p>

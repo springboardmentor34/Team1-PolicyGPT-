@@ -12,7 +12,7 @@ import { ApiService } from '../../../core/services/api.service';
     <div class="container py-5">
       <div class="row justify-content-center">
         <div class="col-md-7 col-lg-5">
-          <div class="gov-card p-4 p-md-5">
+          <div class="gov-card p-4 p-md-5 auth-card-enter">
             <div class="text-center mb-4">
               <div class="text-white rounded-2 d-inline-flex align-items-center justify-content-center mb-3" style="width: 52px; height: 52px; background-color: var(--gov-navy-primary);">
                 <i class="fa-solid fa-lock fs-4"></i>

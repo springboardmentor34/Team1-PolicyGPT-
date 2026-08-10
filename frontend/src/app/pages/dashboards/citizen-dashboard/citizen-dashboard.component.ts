@@ -4,14 +4,15 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiService } from '../../../core/services/api.service';
 import { SchemeEligibilityResult, NotificationItem, FeedbackItem } from '../../../core/models/models';
+import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-citizen-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+      <div appScrollReveal class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <div>
           <span class="badge bg-success text-white px-3 py-1.5 rounded-pill mb-2"><i class="fa-solid fa-user-check me-1"></i> CITIZEN BENEFICIARY PORTAL</span>
           <h2 class="fw-bold mb-0" style="color: var(--gov-navy-primary);">Welcome, {{ authService.currentUser()?.full_name }}</h2>

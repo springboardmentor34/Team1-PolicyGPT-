@@ -736,18 +736,386 @@ body.theme-dark .alert-success {
   border-color: #059669 !important;
 }
 
-/* Scroll Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* =====================================================
+   POLICYGPT — GLOBAL ANIMATION SYSTEM
+   Version 2.0 | CSS-first, performance-safe
+   ===================================================== */
+
+/* ---------- Animation Design Tokens ---------- */
+:root {
+  --anim-fast:   150ms;
+  --anim-normal: 260ms;
+  --anim-slow:   420ms;
+  --anim-easing: cubic-bezier(0.16, 1, 0.3, 1);
+  --anim-ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --anim-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.gov-card, .stat-card, .table-responsive, .accordion-item {
-  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) ease-out;
+/* ---------- Keyframe Definitions ---------- */
+@keyframes pgFadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pgFadeInDown {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pgFadeInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pgFadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pgFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pgScaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes pgPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.04); }
+}
+@keyframes pgShimmer {
+  from { background-position: -200% center; }
+  to   { background-position: 200% center; }
+}
+@keyframes pgSlideInFromRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pgBounceIn {
+  from { opacity: 0; transform: scale(0.88) translateY(10px); }
+  60%  { opacity: 1; transform: scale(1.03) translateY(-2px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes pgSpinnerRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Page Route Transition ---------- */
+.page-enter {
+  animation: pgFadeInUp var(--anim-normal) var(--anim-easing) both;
+}
+
+/* ---------- Scroll-Reveal System ---------- */
+/* Initial hidden state — set by directive */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--anim-slow) var(--anim-easing),
+    transform var(--anim-slow) var(--anim-easing);
+}
+.scroll-reveal.sr-left {
+  transform: translateX(-22px);
+}
+.scroll-reveal.sr-right {
+  transform: translateX(22px);
+}
+.scroll-reveal.sr-fade {
+  transform: none;
+}
+.scroll-reveal.sr-scale {
+  transform: scale(0.93);
+}
+
+/* Visible state — added by AnimationService when in viewport */
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+}
+
+/* ---------- Stagger Delay Classes ---------- */
+.anim-delay-1 { transition-delay: 60ms; }
+.anim-delay-2 { transition-delay: 120ms; }
+.anim-delay-3 { transition-delay: 180ms; }
+.anim-delay-4 { transition-delay: 240ms; }
+.anim-delay-5 { transition-delay: 300ms; }
+.anim-delay-6 { transition-delay: 360ms; }
+
+/* ---------- Micro-Interaction: Buttons ---------- */
+.btn, button:not(.password-toggle-btn) {
+  transition:
+    background-color var(--anim-normal) var(--anim-ease-out),
+    border-color var(--anim-normal) var(--anim-ease-out),
+    box-shadow var(--anim-normal) var(--anim-ease-out),
+    transform var(--anim-fast) var(--anim-ease-out),
+    color var(--anim-fast) var(--anim-ease-out) !important;
+  will-change: transform;
+}
+
+.btn:hover:not(:disabled), button:hover:not(:disabled):not(.password-toggle-btn) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled), button:active:not(:disabled):not(.password-toggle-btn) {
+  transform: scale(0.96) translateY(0) !important;
+  transition-duration: 80ms !important;
+}
+
+.btn:disabled, button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Ripple effect on gov buttons */
+.btn-gov-navy, .btn-gov-saffron, .btn-gov-outline {
+  position: relative;
+  overflow: hidden;
+}
+.btn-gov-navy::after, .btn-gov-saffron::after, .btn-gov-outline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.08);
+  opacity: 0;
+  transition: opacity var(--anim-fast) ease;
+}
+.btn-gov-navy:active::after, .btn-gov-saffron:active::after, .btn-gov-outline:active::after {
+  opacity: 1;
+}
+
+/* ---------- Micro-Interaction: Forms ---------- */
+.form-control, .form-select {
+  transition:
+    border-color var(--anim-normal) var(--anim-ease-out),
+    box-shadow var(--anim-normal) var(--anim-ease-out),
+    background-color var(--anim-normal) ease !important;
+}
+.form-control:focus, .form-select:focus {
+  transform: none; /* no layout shift */
+}
+
+/* Validation message slide-in */
+.invalid-feedback,
+.alert,
+[class*="alert-"] {
+  animation: pgFadeInDown var(--anim-normal) var(--anim-easing) both;
+}
+
+/* Success alert with green pulse border */
+.alert-success {
+  animation: pgBounceIn var(--anim-slow) var(--anim-easing) both;
+}
+
+/* ---------- Card Hover Elevation ---------- */
+.gov-card {
+  transition:
+    box-shadow var(--anim-normal) var(--anim-ease-out),
+    transform var(--anim-normal) var(--anim-ease-out),
+    border-color var(--anim-normal) ease !important;
+  will-change: transform, box-shadow;
+}
+.gov-card:hover {
+  box-shadow: var(--gov-shadow-lg) !important;
+  transform: translateY(-3px) !important;
+}
+.gov-card:active {
+  transform: translateY(-1px) !important;
+}
+
+/* Stat card hover */
+.stat-card {
+  transition:
+    box-shadow var(--anim-normal) var(--anim-ease-out),
+    transform var(--anim-normal) var(--anim-ease-out) !important;
+  will-change: transform;
+}
+.stat-card:hover {
+  box-shadow: var(--gov-shadow-md) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ---------- Sidebar Navigation Animations ---------- */
+.sidebar-link {
+  position: relative;
+  transition:
+    background-color var(--anim-normal) var(--anim-ease-out),
+    color var(--anim-normal) var(--anim-ease-out),
+    padding-left var(--anim-normal) var(--anim-easing) !important;
+}
+.sidebar-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background-color: var(--gov-navy-primary);
+  transform: scaleY(0);
+  transition: transform var(--anim-normal) var(--anim-easing);
+  transform-origin: center;
+}
+.sidebar-link:hover::before {
+  transform: scaleY(0.5);
+  opacity: 0.4;
+}
+.sidebar-link.active::before {
+  transform: scaleY(1);
+}
+
+body.theme-dark .sidebar-link::before {
+  background-color: #f59e0b;
+}
+
+.sidebar-link i {
+  transition:
+    color var(--anim-normal) var(--anim-ease-out),
+    transform var(--anim-fast) var(--anim-easing) !important;
+}
+.sidebar-link:hover i {
+  transform: translateX(2px);
+}
+.sidebar-link.active i {
+  transform: none;
+}
+
+/* ---------- Navbar Link Underline Slide ---------- */
+.nav-link {
+  position: relative;
+  transition: color var(--anim-normal) ease !important;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background-color: var(--gov-navy-secondary);
+  transform: scaleX(0);
+  transition: transform var(--anim-normal) var(--anim-easing);
+  transform-origin: center;
+}
+.nav-link:hover::after, .nav-link.active::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Modals & Dropdowns ---------- */
+.modal-content {
+  animation: pgScaleIn var(--anim-normal) var(--anim-easing) both;
+}
+
+/* Notification / any dropdown panel */
+.gov-card.position-absolute,
+[style*="z-index: 1060"],
+[style*="z-index:1060"] {
+  animation: pgFadeInDown var(--anim-fast) var(--anim-easing) both;
+  transform-origin: top right;
+}
+
+/* ---------- Table / List Animation ---------- */
+.table tbody tr {
+  transition:
+    background-color var(--anim-fast) ease,
+    box-shadow var(--anim-fast) ease !important;
+}
+.table-hover tbody tr:hover {
+  box-shadow: inset 0 0 0 1px rgba(11, 25, 44, 0.06);
+}
+
+/* ---------- Accordion Animations ---------- */
+.accordion-button {
+  transition:
+    color var(--anim-normal) ease,
+    background-color var(--anim-normal) ease !important;
+}
+.accordion-button i {
+  transition: transform var(--anim-normal) var(--anim-easing) !important;
+}
+
+/* ---------- Badge Pop-in ---------- */
+.badge {
+  animation: pgScaleIn var(--anim-fast) var(--anim-bounce) both;
+}
+
+/* ---------- Notification Bell Pulse ---------- */
+.badge.bg-danger.rounded-pill {
+  animation: pgPulse 2s ease-in-out infinite;
+}
+
+/* ---------- Skeleton / Loading Shimmer ---------- */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--gov-border) 25%,
+    var(--gov-bg-warm) 50%,
+    var(--gov-border) 75%
+  );
+  background-size: 200% auto;
+  animation: pgShimmer 1.4s linear infinite;
+  border-radius: 4px;
+  color: transparent !important;
+}
+
+/* ---------- Focus-visible Ring (accessibility) ---------- */
+:focus-visible {
+  outline: 2px solid var(--gov-navy-secondary);
+  outline-offset: 2px;
+  border-radius: 4px;
+  transition: outline-offset var(--anim-fast) ease;
+}
+body.theme-dark :focus-visible {
+  outline-color: #f59e0b;
+}
+
+/* ---------- Hero Section Text Stagger (public dashboard) ---------- */
+.hero-badge   { animation: pgFadeInDown 0.5s var(--anim-easing) 0.05s both; }
+.hero-title   { animation: pgFadeInUp   0.55s var(--anim-easing) 0.12s both; }
+.hero-desc    { animation: pgFadeInUp   0.55s var(--anim-easing) 0.22s both; }
+.hero-actions { animation: pgFadeInUp   0.55s var(--anim-easing) 0.32s both; }
+.hero-card    { animation: pgScaleIn    0.55s var(--anim-easing) 0.18s both; }
+
+/* ---------- Auth Card Entry ---------- */
+.auth-card-enter {
+  animation: pgBounceIn var(--anim-slow) var(--anim-easing) both;
+}
+
+/* ---------- Spinner Utility ---------- */
+.pg-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pgSpinnerRotate 0.7s linear infinite;
+}
+
+/* ---------- Smooth scroll behaviour ---------- */
+html { scroll-behavior: smooth; }
+
+/* =============================================================
+   REDUCED MOTION — Respect user OS accessibility preference
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+  .scroll-reveal,
+  .scroll-reveal.sr-left,
+  .scroll-reveal.sr-right,
+  .scroll-reveal.sr-scale,
+  .scroll-reveal.sr-fade {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .skeleton-shimmer {
+    animation: none !important;
+    background: var(--gov-border) !important;
+  }
+  .badge.bg-danger.rounded-pill {
+    animation: none !important;
+  }
 }

@@ -4,16 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { SchemeEligibilityResult } from '../../core/models/models';
+import { ScrollRevealDirective } from '../../core/directives/scroll-reveal.directive';
 
 type EvaluationState = 'INITIAL' | 'LOADING' | 'SUCCESS' | 'NO_RESULTS' | 'API_ERROR';
 
 @Component({
   selector: 'app-eligibility-checker',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
-      <div class="mb-4">
+      <div appScrollReveal class="mb-4">
         <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill mb-2">
           <i class="fa-solid fa-calculator me-1"></i> AUTOMATED MATCHING ENGINE
         </span>

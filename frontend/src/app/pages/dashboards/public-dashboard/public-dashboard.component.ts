@@ -3,25 +3,26 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 import { Policy, Scheme } from '../../../core/models/models';
+import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-public-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ScrollRevealDirective],
   template: `
     <!-- Hero Banner Section -->
     <div class="text-white py-5 position-relative overflow-hidden" style="background: linear-gradient(135deg, #0b192c 0%, #1e3e62 100%); border-bottom: 3px solid var(--gov-saffron);">
       <div class="container py-4">
         <div class="row align-items-center">
           <div class="col-lg-8">
-            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3 hero-badge d-inline-block">
               <i class="fa-solid fa-landmark me-1"></i> PUBLIC INFORMATION PORTAL
             </span>
-            <h1 class="display-5 text-white fw-bold mb-3">Government Policy & Public Scheme Intelligence</h1>
-            <p class="lead text-light opacity-90 mb-4" style="max-width: 680px;">
+            <h1 class="display-5 text-white fw-bold mb-3 hero-title">Government Policy &amp; Public Scheme Intelligence</h1>
+            <p class="lead text-light opacity-90 mb-4 hero-desc" style="max-width: 680px;">
               Discover trusted information about government policies and public welfare schemes through one centralized platform.
             </p>
-            <div class="d-flex flex-wrap gap-3">
+            <div class="d-flex flex-wrap gap-3 hero-actions">
               <a routerLink="/login" class="btn btn-gov-saffron btn-lg px-4">
                 <i class="fa-solid fa-right-to-bracket me-2"></i> Sign In
               </a>
@@ -31,7 +32,7 @@ import { Policy, Scheme } from '../../../core/models/models';
             </div>
           </div>
           <div class="col-lg-4 d-none d-lg-block text-center">
-            <div class="p-4 rounded-3 bg-white text-dark shadow-sm border border-light">
+            <div class="p-4 rounded-3 bg-white text-dark shadow-sm border border-light hero-card">
               <i class="fa-solid fa-shield-halved text-primary fs-1 mb-3" style="color: var(--gov-navy-primary) !important;"></i>
               <h4 class="fw-bold mb-2" style="color: var(--gov-navy-primary);">Institutional Intelligence</h4>
               <p class="small text-muted mb-0">Structured policy directives, scheme benefit guidelines, and direct access for verified roles.</p>
@@ -44,7 +45,7 @@ import { Policy, Scheme } from '../../../core/models/models';
     <div class="container py-5">
 
       <!-- Featured Government Schemes Section -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
+      <div appScrollReveal class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 class="fw-bold mb-1" style="color: var(--gov-navy-primary);">Featured Government Schemes</h3>
           <p class="text-muted small mb-0">Preview of key central and state welfare initiatives.</p>
@@ -53,8 +54,8 @@ import { Policy, Scheme } from '../../../core/models/models';
       </div>
 
       <div class="row g-4 mb-5">
-        <div *ngFor="let scheme of schemes" class="col-md-6 col-lg-4">
-          <div class="gov-card h-100 p-4 d-flex flex-column justify-content-between">
+        <div *ngFor="let scheme of schemes; let i = index" class="col-md-6 col-lg-4">
+          <div appScrollReveal [animDelay]="getDelay(i)" class="gov-card h-100 p-4 d-flex flex-column justify-content-between">
             <div>
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <span class="badge bg-light text-dark border px-2 py-1 fs-7 fw-semibold">{{ scheme.category }}</span>
@@ -77,7 +78,7 @@ import { Policy, Scheme } from '../../../core/models/models';
       </div>
 
       <!-- Latest Government Policies Section -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
+      <div appScrollReveal class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 class="fw-bold mb-1" style="color: var(--gov-navy-primary);">Latest Government Policies</h3>
           <p class="text-muted small mb-0">Official directives and regulatory circulars published by Ministries.</p>
@@ -86,8 +87,8 @@ import { Policy, Scheme } from '../../../core/models/models';
       </div>
 
       <div class="row g-4 mb-5">
-        <div *ngFor="let policy of policies" class="col-md-6 col-lg-4">
-          <div class="gov-card h-100 p-4 d-flex flex-column justify-content-between">
+        <div *ngFor="let policy of policies; let i = index" class="col-md-6 col-lg-4">
+          <div appScrollReveal [animDelay]="getDelay(i)" class="gov-card h-100 p-4 d-flex flex-column justify-content-between">
             <div>
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="badge bg-light text-dark border fs-7">{{ policy.category }}</span>
@@ -109,7 +110,7 @@ import { Policy, Scheme } from '../../../core/models/models';
       </div>
 
       <!-- About PolicyGPT Section -->
-      <div class="gov-card p-5 mb-5 bg-white border border-light">
+      <div appScrollReveal animDir="fade" class="gov-card p-5 mb-5 bg-white border border-light">
         <div class="row align-items-center">
           <div class="col-lg-8">
             <h3 class="fw-bold mb-3" style="color: var(--gov-navy-primary);">About PolicyGPT</h3>
@@ -129,13 +130,13 @@ import { Policy, Scheme } from '../../../core/models/models';
       </div>
 
       <!-- Help / FAQ Link Bar -->
-      <div class="p-4 rounded-3 text-white d-flex flex-column flex-md-row justify-content-between align-items-center" style="background-color: var(--gov-navy-primary);">
+      <div appScrollReveal animDir="up" class="p-4 rounded-3 text-white d-flex flex-column flex-md-row justify-content-between align-items-center" style="background-color: var(--gov-navy-primary);">
         <div>
           <h5 class="fw-bold text-white mb-1"><i class="fa-solid fa-circle-question me-2 text-warning"></i> Need Help or Have Inquiries?</h5>
           <p class="text-light opacity-75 small mb-0">Browse our Helpdesk FAQs or submit a policy query ticket.</p>
         </div>
         <a routerLink="/feedback" class="btn btn-gov-saffron btn-sm mt-3 mt-md-0 px-4">
-          Visit Help & FAQs <i class="fa-solid fa-arrow-right ms-1"></i>
+          Visit Help &amp; FAQs <i class="fa-solid fa-arrow-right ms-1"></i>
         </a>
       </div>
 
@@ -157,5 +158,11 @@ export class PublicDashboardComponent implements OnInit {
 
   navigateToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  /** Maps index 0–5 to valid delay string '1'–'6' */
+  getDelay(i: number): '1' | '2' | '3' | '4' | '5' | '6' | '' {
+    const delays: ('1' | '2' | '3' | '4' | '5' | '6')[] = ['1', '2', '3', '4', '5', '6'];
+    return delays[i] ?? '';
   }
 }

@@ -1,21 +1,22 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/services/api.service';
+import { ScrollRevealDirective } from '../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-reports-analytics',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
-      <div class="mb-4">
+      <div appScrollReveal class="mb-4">
         <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill mb-2"><i class="fa-solid fa-file-invoice me-1"></i> REPORTS & EXPORT ENGINE</span>
         <h2 class="fw-bold" style="color: var(--gov-navy-primary);">Policy & Public Scheme Reports</h2>
         <p class="text-muted">Generate and export formatted official PDF directives and Excel spreadsheet datasets.</p>
       </div>
 
       <!-- Quick Export Cards -->
-      <div class="row g-4 mb-4">
+      <div appScrollReveal animDelay="1" class="row g-4 mb-4">
         <div class="col-md-6 col-xl-3">
           <div class="gov-card p-4 text-center h-100 d-flex flex-column justify-content-between">
             <div>

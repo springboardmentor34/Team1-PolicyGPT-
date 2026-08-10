@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
 import { Policy, Scheme } from '../../../core/models/models';
+import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-official-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
       <!-- Header Banner -->
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+      <div appScrollReveal class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <div>
           <span class="badge bg-info text-dark px-3 py-1.5 rounded-pill mb-2"><i class="fa-solid fa-user-tie me-1"></i> GOVERNMENT OFFICIAL WORKSPACE</span>
           <h2 class="fw-bold mb-0" style="color: var(--gov-navy-primary);">Department Publishing & Management Portal</h2>

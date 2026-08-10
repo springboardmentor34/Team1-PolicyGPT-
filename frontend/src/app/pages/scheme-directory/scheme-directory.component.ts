@@ -4,21 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
 import { Scheme } from '../../core/models/models';
+import { ScrollRevealDirective } from '../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-scheme-directory',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
-      <div class="mb-4">
+      <div appScrollReveal class="mb-4">
         <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill mb-2"><i class="fa-solid fa-hand-holding-hand me-1"></i> PUBLIC SCHEMES DIRECTORY</span>
         <h2 class="fw-bold" style="color: var(--gov-navy-primary);">Central & State Welfare Schemes</h2>
         <p class="text-muted">Explore financial support, health cover, scholarships, and housing grants.</p>
       </div>
 
       <!-- Filter Controls -->
-      <div class="row g-3 mb-4">
+      <div appScrollReveal animDelay="1" class="row g-3 mb-4">
         <div class="col-md-7 col-lg-8">
           <input type="text" [(ngModel)]="searchQuery" (keyup)="applyFilters()" class="form-control" placeholder="Filter schemes by name or benefit...">
         </div>

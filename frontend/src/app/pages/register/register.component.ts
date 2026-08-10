@@ -12,7 +12,7 @@ import { AuthService } from '../../core/services/auth.service';
     <div class="container py-5">
       <div class="row justify-content-center">
         <div class="col-md-9 col-lg-7">
-          <div class="gov-card p-4 p-md-5">
+          <div class="gov-card p-4 p-md-5 auth-card-enter">
             <div class="text-center mb-4">
               <span class="badge bg-info text-dark px-3 py-1.5 rounded-pill mb-2">
                 <i class="fa-solid fa-user-shield me-1"></i> PUBLIC CITIZEN PORTAL

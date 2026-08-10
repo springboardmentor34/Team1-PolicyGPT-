@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AuthService } from './core/services/auth.service';
@@ -18,13 +19,26 @@ export class App implements OnInit {
   title = 'frontend';
   public authService = inject(AuthService);
   public apiService = inject(ApiService);
+  private router = inject(Router);
 
   public notifications: NotificationItem[] = [];
   public showNotificationsDropdown = false;
   public unreadCount = 0;
 
+  /** Flag flipped on every route navigation to re-trigger CSS entry animation */
+  public pageAnimKey = 0;
+
   ngOnInit() {
     this.loadNotifications();
+
+    // Re-trigger page entry animation on every route change
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => {
+        this.pageAnimKey++;
+        // Scroll to top on page change (smooth)
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
   }
 
   loadNotifications() {
@@ -77,4 +91,3 @@ export class App implements OnInit {
     });
   }
 }
-

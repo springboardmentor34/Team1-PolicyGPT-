@@ -3,14 +3,15 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 import { Scheme } from '../../../core/models/models';
+import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-organization-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+      <div appScrollReveal class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <div>
           <span class="badge bg-dark text-white px-3 py-1.5 rounded-pill mb-2"><i class="fa-solid fa-building me-1"></i> ENTERPRISE & NGO PORTAL</span>
           <h2 class="fw-bold mb-0" style="color: var(--gov-navy-primary);">Business Grants & Public Schemes Directory</h2>

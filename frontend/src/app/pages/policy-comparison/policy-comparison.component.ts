@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { Scheme } from '../../core/models/models';
+import { ScrollRevealDirective } from '../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-policy-comparison',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
       <!-- Header -->
-      <div class="mb-4">
+      <div appScrollReveal class="mb-4">
         <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-2 fs-7">
           <i class="fa-solid fa-code-compare me-1"></i> COMPARATIVE ANALYSIS
         </span>

@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
 import { Policy, Scheme, User, FeedbackItem } from '../../../core/models/models';
+import { ScrollRevealDirective } from '../../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
       <!-- Header Bar -->
-      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-4 gap-3">
+      <div appScrollReveal class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-4 gap-3">
         <div>
           <span class="badge bg-danger text-white px-3 py-1.5 rounded-pill mb-2"><i class="fa-solid fa-user-shield me-1"></i> SYSTEM ADMINISTRATOR CONTROL CENTER</span>
           <h2 class="fw-bold mb-0" style="color: var(--gov-navy-primary);">Global Platform Governance & Account Provisioning</h2>

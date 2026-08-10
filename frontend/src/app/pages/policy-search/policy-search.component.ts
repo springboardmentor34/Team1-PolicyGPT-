@@ -3,21 +3,22 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { Policy, Scheme } from '../../core/models/models';
+import { ScrollRevealDirective } from '../../core/directives/scroll-reveal.directive';
 
 @Component({
   selector: 'app-policy-search',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ScrollRevealDirective],
   template: `
     <div class="container-fluid p-0">
-      <div class="mb-4">
+      <div appScrollReveal class="mb-4">
         <span class="badge bg-warning text-dark px-3 py-1.5 rounded-pill mb-2"><i class="fa-solid fa-magnifying-glass me-1"></i> INTELLIGENT SEARCH ENGINE</span>
         <h2 class="fw-bold" style="color: var(--gov-navy-primary);">Government Policy & Circular Search</h2>
         <p class="text-muted">Search across central and state policies, ministries, sectors, and active directives.</p>
       </div>
 
       <!-- Search & Faceted Filter Bar -->
-      <div class="gov-card p-4 mb-4">
+      <div appScrollReveal animDelay="1" class="gov-card p-4 mb-4">
         <div class="row g-3">
           <div class="col-lg-5">
             <label class="form-label fw-semibold">Search Keywords</label>

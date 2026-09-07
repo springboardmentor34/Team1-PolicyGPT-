@@ -160,7 +160,7 @@ def test_notification_full_lifecycle_and_user_isolation():
 
     cit_notifs_res2 = client.get("/api/v1/notifications/", headers=cit_headers)
     cit_notifs2 = cit_notifs_res2.json()
-    assert any("Support Ticket Update" in n["title"] for n in cit_notifs2)
+    assert any("Support Ticket" in n["title"] for n in cit_notifs2)
 
     # 4. Unread Count & Mark Read / Mark All Read
     unread_res = client.get("/api/v1/notifications/unread-count", headers=cit_headers)

@@ -8,7 +8,7 @@ import { User, AuthResponse } from '../models/models';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000/api/v1/auth';
+  private apiUrl = 'https://policygpt-backend-tkzt.onrender.com/api/v1/auth';
   
   public currentUser = signal<User | null>(this.getUserFromStorage());
   public token = signal<string | null>(localStorage.getItem('policygpt_token'));

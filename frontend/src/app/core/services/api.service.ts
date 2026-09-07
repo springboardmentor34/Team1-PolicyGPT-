@@ -7,7 +7,7 @@ import { Policy, Scheme, SchemeEligibilityResult, EligibilityCheckInput, Notific
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8000/api/v1';
+  private baseUrl = 'https://policygpt-backend-tkzt.onrender.com/api/v1';
 
   constructor(private http: HttpClient) {}
 

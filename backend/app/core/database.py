@@ -10,16 +10,16 @@ Base = declarative_base()
 # Try connecting to PostgreSQL first, fallback to SQLite if PostgreSQL is unavailable
 try:
     engine = create_engine(
-        settings.DATABASE_URL,
+        settings.sync_database_url,
         pool_pre_ping=True,
-        pool_size=20,
-        max_overflow=10,
+        pool_size=10,
+        max_overflow=5,
         pool_recycle=1800
     )
     # Test connection
     with engine.connect() as conn:
         print("\n==================================================================")
-        print("DATABASE CONNECTION SUCCESSFUL: Connected to PolicyGPT PostgreSQL at localhost:5432")
+        print("DATABASE CONNECTION SUCCESSFUL: Connected to PolicyGPT PostgreSQL Database")
         print("==================================================================\n")
 except Exception as e:
     print("\n------------------------------------------------------------------")

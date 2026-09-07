@@ -11,6 +11,13 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://policygpt_user:policygpt_pass@localhost:5432/policygpt_db"
     SQLITE_FALLBACK_URL: str = "sqlite:///./policygpt.db"
 
+    @property
+    def sync_database_url(self) -> str:
+        url = self.DATABASE_URL
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return url
+
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
     SMTP_USER: str = "notifications@policygpt.gov.in"
